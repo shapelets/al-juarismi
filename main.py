@@ -1,3 +1,12 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2019 Shapelets.io
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 import json
 import random
 import string
@@ -7,30 +16,29 @@ import click
 import dialogflow_v2 as dialogflow
 from google.protobuf import json_format as pbjson
 
-import datasets as dt
-import plotting as pl
+import aljuarismi as al
 
 random = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
 
-project_id = 'aerial-reef-234410'
+project_id = 'aljuaritmo'
 session_id = random
 language_code = 'en'
 datasetPaths = {}
 currentDataset = None
 
 # Container for loaded datasets
-loadedDatasets = {}
+loaded_datasets = {}
 
 
 def save_dictionary():
-    f = open("DictionaryDataset.txt", "w+")
+    f = open("./resources/DictionaryDataset.txt", "w+")
     for key, val in datasetPaths.items():
         f.write(key + ',' + val + '\n')
     f.close()
 
 
 def load_dictionary():
-    f = open("DictionaryDataset.txt", "r")
+    f = open("./resources/DictionaryDataset.txt", "r")
     global datasetPaths
     for line in f:
         fields = line.split(",")
@@ -55,7 +63,7 @@ def detect_intent_text(project_id, session_id, text, language_code):
 
     response = session_client.detect_intent(session=session, query_input=query_input)
 
-    """Convertion of Protocol Buffer to JSON"""
+    """Conversion of Protocol Buffer to JSON"""
     response_json = pbjson.MessageToJson(response)
     data = json.loads(response_json)
     parameters = data['queryResult']['parameters']
@@ -69,23 +77,26 @@ def detect_intent_text(project_id, session_id, text, language_code):
     global currentDataset
 
     if response.query_result.intent.display_name == 'RandomDataset':
-        pass
+        currentDataset = al.createDataset(parameters, loaded_datasets)
     elif response.query_result.intent.display_name == 'LoadDataset':
-        currentDataset = dt.executeLoadDataset(parameters, loadedDatasets, datasetPaths)
+        currentDataset = al.executeLoadDataset(parameters, loaded_datasets, datasetPaths)
     elif response.query_result.intent.display_name == 'ShowResult':
-        pl.executePlot(currentDataset)
+        al.execute_plot(currentDataset)
     elif response.query_result.intent.display_name == 'PrintResult':
         """Show the result of anything"""
-    elif response.query_result.intent.display_name == 'Exit':
+    elif response.query_result.intent.display_name == 'Exit - yes':
         print('Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
 
         print('Closing program')
         save_dictionary()
         exit()
+    elif response.query_result.intent.display_name == 'Exit - no':
+        exit()
     print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
 
 
 def main(*args, **kwargs):
+
     try:
         load_dictionary()
     except IOError:
@@ -93,9 +104,10 @@ def main(*args, **kwargs):
     finally:
         pass
     try:
+        print("Welcome, I'm Aljuarismo, what can I do for you?")
         while True:
             query = click.prompt('')
-            click.echo('<you> %s' % query)
+            click.echo('DEBUG: %s' % query)
             detect_intent_text(project_id, session_id, query, language_code)
     except click.exceptions.Abort:
         print('Closing the program')
