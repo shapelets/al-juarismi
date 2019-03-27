@@ -18,19 +18,19 @@ def plot_dataset(dataset):
     :return:
     """
     name = ''
-    ncol = dataset.count()
+    ncol = dataset.columns.size
     if ncol - 1 > 1:
-        print("Which column do you want to print?")
-        query = ''
-        while query != '':
-            click.prompt('')
-        if query.isdigit():
-            aux = list(dataset.columns.values)
-            name = aux.pop(int(query))
-        else:
-            name = query
-    plt.plot(dataset[name])
-    plt.show()
+        print("I have more than one column available, which is the one to be selected?")
+        print(list(dataset.columns.values))
+        column_name = ''
+        while column_name == '':
+            column_name = click.prompt('Which column do you want to plot?', type=str)
+            click.echo('DEBUG: %s' % column_name)
+
+    plt.figure()
+    plt.plot(dataset[column_name])
+    plt.title(column_name)
+    plt.show(block=False)
 
 
 def execute_plot(current_dataset):

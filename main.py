@@ -89,16 +89,22 @@ def detect_intent_text(project_id, session_id, text, language_code):
 
     if response.query_result.intent.display_name == 'RandomDataset':
         current_dataset = al.createDataset(parameters, loaded_datasets)
+
     elif response.query_result.intent.display_name == 'LoadDataset':
         current_dataset = al.execute_load_dataset(parameters, loaded_datasets, dataset_paths)
+
     elif response.query_result.intent.display_name == 'ShowResult':
         al.execute_plot(current_dataset)
+
     elif response.query_result.intent.display_name == 'PrintResult':
         pass
+
     elif response.query_result.intent.display_name == 'Exit - yes':
         exit()
+
     elif response.query_result.intent.display_name == 'Exit - no':
         exit()
+
     print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
 
 
