@@ -8,8 +8,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import json
-import random
-import string
 import sys
 
 import click
@@ -18,39 +16,52 @@ from google.protobuf import json_format as pbjson
 
 import aljuarismi as al
 
-random = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
-
 project_id = 'aljuaritmo'
-session_id = random
+session_id = al.id_session_creator()
 language_code = 'en'
-datasetPaths = {}
-currentDataset = None
+dataset_paths = {}
+current_dataset = None
 
 # Container for loaded datasets
 loaded_datasets = {}
 
 
 def save_dictionary():
+    """
+    Saves in a file the dataset file names and paths we had loaded in the previous or actual session
+    :return:
+    """
     f = open("./resources/DictionaryDataset.txt", "w+")
-    for key, val in datasetPaths.items():
+    for key, val in dataset_paths.items():
         f.write(key + ',' + val + '\n')
     f.close()
 
 
 def load_dictionary():
+    """
+    Load the file which contains the names and paths of the datasets that had been loaded in previous sessions
+    :return:
+    """
     f = open("./resources/DictionaryDataset.txt", "r")
-    global datasetPaths
+    global dataset_paths
     for line in f:
         fields = line.split(",")
-        datasetPaths[fields[0]] = fields[1].rstrip()
+        dataset_paths[fields[0]] = fields[1].rstrip()
     f.close()
 
 
 def detect_intent_text(project_id, session_id, text, language_code):
-    """Returns the result of detect intent with texts as inputs.
+    """
+    Detects the intent of the text and execute some instruction
 
     Using the same `session_id` between requests allows continuation
-    of the conversation."""
+    of the conversation.
+
+    :param project_id: ID of the project
+    :param session_id: ID of the session
+    :param text: The text input for analyse
+    :param language_code: Code of the language
+    """
 
     session_client = dialogflow.SessionsClient()
 
@@ -74,21 +85,17 @@ def detect_intent_text(project_id, session_id, text, language_code):
     print('DEBUG: Detected intent: {} (confidence: {})\n'.format(
         response.query_result.intent.display_name,
         response.query_result.intent_detection_confidence))
-    global currentDataset
+    global current_dataset
 
     if response.query_result.intent.display_name == 'RandomDataset':
-        currentDataset = al.createDataset(parameters, loaded_datasets)
+        current_dataset = al.createDataset(parameters, loaded_datasets)
     elif response.query_result.intent.display_name == 'LoadDataset':
-        currentDataset = al.executeLoadDataset(parameters, loaded_datasets, datasetPaths)
+        current_dataset = al.execute_load_dataset(parameters, loaded_datasets, dataset_paths)
     elif response.query_result.intent.display_name == 'ShowResult':
-        al.execute_plot(currentDataset)
+        al.execute_plot(current_dataset)
     elif response.query_result.intent.display_name == 'PrintResult':
-        """Show the result of anything"""
+        pass
     elif response.query_result.intent.display_name == 'Exit - yes':
-        print('Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
-
-        print('Closing program')
-        save_dictionary()
         exit()
     elif response.query_result.intent.display_name == 'Exit - no':
         exit()

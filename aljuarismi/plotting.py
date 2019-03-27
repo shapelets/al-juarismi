@@ -7,15 +7,36 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import click
 import matplotlib.pyplot as plt
 
 
-# This function plots a dataset.
 def plot_dataset(dataset):
-    plt.plot(dataset['Fare'])
+    """
+    Plots graphically a column of the dataset
+    :param dataset: the current dataset
+    :return:
+    """
+    name = ''
+    ncol = dataset.count()
+    if ncol - 1 > 1:
+        print("Which column do you want to print?")
+        query = ''
+        while query != '':
+            click.prompt('')
+        if query.isdigit():
+            aux = list(dataset.columns.values)
+            name = aux.pop(int(query))
+        else:
+            name = query
+    plt.plot(dataset[name])
     plt.show()
 
 
 def execute_plot(current_dataset):
-    """Show the result graphically of anything"""
+    """
+    Execute the function plot
+    :param current_dataset: the current dataset
+    :return:
+    """
     plot_dataset(current_dataset)

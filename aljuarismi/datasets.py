@@ -16,7 +16,11 @@ import pandas as pd
 num_rand = 0
 
 
-def askForDatasetPath():
+def ask_for_dataset_path():
+    """
+    Ask for the dataset path
+    :return: The path introduced
+    """
     print('Where is it located?')
     query = ''
     while query == '' or query == 'here':
@@ -28,28 +32,47 @@ def askForDatasetPath():
     return path
 
 
-def loadDataset(loadedDatasets, dataset, path):
+def load_dataset(loaded_datasets, dataset, path):
+    """
+    Load the dataset
+    :param loaded_datasets: The already loaded datsets
+    :param dataset: The name of the dataset to load
+    :param path: The path where it is located the dataset to load
+    :return: The loaded dataset
+    """
     current_dataset = pd.read_csv(path + '/' + dataset + '.csv')
-    loadedDatasets[dataset] = current_dataset
+    loaded_datasets[dataset] = current_dataset
     return current_dataset
 
 
-def executeLoadDataset(parameters, loadedDatasets, datasetPaths):
-    """Load the dataset"""
+def execute_load_dataset(parameters, loaded_datasets, dataset_paths):
+    """
+    Load the dataset
+    :param parameters: The parameters which have the name of the dataset 
+    :param loaded_datasets: The already loaded dataset
+    :param dataset_paths: The path of the datasets which have been loaded previously in this session or another
+    :return: the loaded dataset
+    """""
     dataset_name = parameters['Dataset']
-    if dataset_name in loadedDatasets.keys():
-        data = loadedDatasets[dataset_name]
+    if dataset_name in loaded_datasets.keys():
+        data = loaded_datasets[dataset_name]
     else:
-        if dataset_name in datasetPaths.keys():
-            path = datasetPaths[dataset_name]
+        if dataset_name in dataset_paths.keys():
+            path = dataset_paths[dataset_name]
         else:
-            path = askForDatasetPath()
-            datasetPaths[dataset_name] = path
-        data = loadDataset(loadedDatasets, dataset_name, path)
+            path = ask_for_dataset_path()
+            dataset_paths[dataset_name] = path
+        data = load_dataset(loaded_datasets, dataset_name, path)
     return data
 
 
-def createDataset(parameters, loadedDatasets):
+def createDataset(parameters, loaded_datasets):
+    """
+    Creates a random dataset and saves it with the loaded ones
+    :param parameters: The parameters
+    :param loaded_datasets: The already loaded dataset
+    :return: A random dataset
+    """
     tt = pd.DataFrame([rng.randrange for n in range(50)])
-    loadedDatasets['random' + num_rand] = tt
+    loaded_datasets['random' + str(num_rand)] = tt
     return tt
