@@ -67,10 +67,13 @@ def detect_intent_text(project_id, session_id, text, language_code):
         current_dataset = al.create_dataset(parameters, loaded_datasets)
     elif response.query_result.intent.display_name == 'LoadDataset':
         current_dataset = al.execute_load_dataset(parameters, loaded_datasets, dataset_paths)
+
     elif response.query_result.intent.display_name == 'ShowResult':
         al.execute_plot(current_dataset)
+
     elif response.query_result.intent.display_name == 'PrintResult':
         pass
+
     elif response.query_result.intent.display_name == 'Exit - yes':
         al.exiting_yes(loaded_datasets, dataset_paths, response.query_result.fulfillment_text)
     elif response.query_result.intent.display_name == 'Exit - no':
