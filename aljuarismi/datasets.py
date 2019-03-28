@@ -15,7 +15,6 @@ import pandas as pd
 
 num_rand = 0
 
-
 def ask_for_dataset_path():
     """
     Ask for the dataset path
@@ -66,7 +65,7 @@ def execute_load_dataset(parameters, loaded_datasets, dataset_paths):
     return data
 
 
-def createDataset(parameters, loaded_datasets):
+def create_dataset(parameters, loaded_datasets):
     """
     Creates a random dataset and saves it with the loaded ones
     :param parameters: The parameters
@@ -76,3 +75,13 @@ def createDataset(parameters, loaded_datasets):
     tt = pd.DataFrame([rng.randrange for n in range(50)])
     loaded_datasets['random' + str(num_rand)] = tt
     return tt
+
+
+def count_random(dataset_paths):
+    """
+    Count the number of randoms that had been saved in the previous sessions
+    :param dataset_paths: The path of the datasets which have been loaded previously in this session or another
+    :return:
+    """
+    global num_rand
+    num_rand = len(list(filter(lambda x: 'random' in x, dataset_paths)))

@@ -26,30 +26,6 @@ current_dataset = None
 loaded_datasets = {}
 
 
-def save_dictionary():
-    """
-    Saves in a file the dataset file names and paths we had loaded in the previous or actual session
-    :return:
-    """
-    f = open("./resources/DictionaryDataset.txt", "w+")
-    for key, val in dataset_paths.items():
-        f.write(key + ',' + val + '\n')
-    f.close()
-
-
-def load_dictionary():
-    """
-    Load the file which contains the names and paths of the datasets that had been loaded in previous sessions
-    :return:
-    """
-    f = open("./resources/DictionaryDataset.txt", "r")
-    global dataset_paths
-    for line in f:
-        fields = line.split(",")
-        dataset_paths[fields[0]] = fields[1].rstrip()
-    f.close()
-
-
 def detect_intent_text(project_id, session_id, text, language_code):
     """
     Detects the intent of the text and execute some instruction
@@ -88,7 +64,7 @@ def detect_intent_text(project_id, session_id, text, language_code):
     global current_dataset
 
     if response.query_result.intent.display_name == 'RandomDataset':
-        current_dataset = al.createDataset(parameters, loaded_datasets)
+        current_dataset = al.create_dataset(parameters, loaded_datasets)
     elif response.query_result.intent.display_name == 'LoadDataset':
         current_dataset = al.execute_load_dataset(parameters, loaded_datasets, dataset_paths)
     elif response.query_result.intent.display_name == 'ShowResult':
@@ -96,16 +72,18 @@ def detect_intent_text(project_id, session_id, text, language_code):
     elif response.query_result.intent.display_name == 'PrintResult':
         pass
     elif response.query_result.intent.display_name == 'Exit - yes':
-        exit()
+        al.exiting_yes(loaded_datasets, dataset_paths, response.query_result.fulfillment_text)
     elif response.query_result.intent.display_name == 'Exit - no':
-        exit()
+        al.exiting_no(response.query_result.fulfillment_text)
     print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
 
 
 def main(*args, **kwargs):
 
     try:
-        load_dictionary()
+        global dataset_paths
+        dataset_paths = al.load_dictionary()
+        al.count_random(dataset_paths)
     except IOError:
         pass
     finally:

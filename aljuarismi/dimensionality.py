@@ -7,8 +7,17 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from aljuarismi.datasets import *
-from aljuarismi.dimensionality import *
-from aljuarismi.exiting import *
-from aljuarismi.plotting import *
-from aljuarismi.utilities import *
+import khiva as kv
+
+
+def reduce_datapoints(timeseries, num_points):
+    """
+
+    :param timeseries:
+    :param num_points:
+    :return:
+    """
+    k_array = kv.Array(timeseries)
+    k_result_ = kv.visvalingam(k_array, num_points)
+    data = k_result_.to_pandas()
+    return data
