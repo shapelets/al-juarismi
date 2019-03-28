@@ -10,5 +10,7 @@
 from aljuarismi.datasets import *
 from aljuarismi.dimensionality import *
 from aljuarismi.exiting import *
+from aljuarismi.operations import *
 from aljuarismi.plotting import *
 from aljuarismi.utilities import *
+from aljuarismi.workspace_manager import *

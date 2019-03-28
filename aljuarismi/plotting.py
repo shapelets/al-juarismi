@@ -27,10 +27,15 @@ def plot_dataset(dataset):
             column_name = click.prompt('Which column do you want to plot?', type=str)
             click.echo('DEBUG: %s' % column_name)
 
-    plt.figure()
-    plt.plot(dataset[column_name])
-    plt.title(column_name)
-    plt.show(block=False)
+        plt.figure()
+        plt.plot(dataset[column_name].values)
+        plt.title(column_name)
+        plt.show(block=False)
+    else:
+        plt.figure()
+        plt.plot(dataset.values)
+        plt.title('Series')
+        plt.show(block=False)
 
 
 def execute_plot(current_dataset):

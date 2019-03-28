@@ -19,11 +19,10 @@ import aljuarismi as al
 project_id = 'aljuaritmo'
 session_id = al.id_session_creator()
 language_code = 'en'
-dataset_paths = {}
 current_dataset = None
 
 # Container for loaded datasets
-loaded_datasets = {}
+workspace = al.create_instancer("workspace")
 
 
 def detect_intent_text(project_id, session_id, text, language_code):
@@ -61,12 +60,14 @@ def detect_intent_text(project_id, session_id, text, language_code):
     print('DEBUG: Detected intent: {} (confidence: {})\n'.format(
         response.query_result.intent.display_name,
         response.query_result.intent_detection_confidence))
+
     global current_dataset
 
     if response.query_result.intent.display_name == 'RandomDataset':
-        current_dataset = al.create_dataset(parameters, loaded_datasets)
+        current_dataset = al.create_dataset(parameters, workspace)
+
     elif response.query_result.intent.display_name == 'LoadDataset':
-        current_dataset = al.execute_load_dataset(parameters, loaded_datasets, dataset_paths)
+        current_dataset = al.execute_load_dataset(parameters, workspace)
 
     elif response.query_result.intent.display_name == 'ShowResult':
         al.execute_plot(current_dataset)
@@ -74,23 +75,20 @@ def detect_intent_text(project_id, session_id, text, language_code):
     elif response.query_result.intent.display_name == 'PrintResult':
         pass
 
+    elif response.query_result.intent.display_name == 'DoOperations':
+        current_dataset = al.do_op(parameters, current_dataset, workspace)
+
     elif response.query_result.intent.display_name == 'Exit - yes':
-        al.exiting_yes(loaded_datasets, dataset_paths, response.query_result.fulfillment_text)
+        al.exiting_yes(workspace, response.query_result.fulfillment_text)
+
     elif response.query_result.intent.display_name == 'Exit - no':
         al.exiting_no(response.query_result.fulfillment_text)
+
     print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
 
 
 def main(*args, **kwargs):
 
-    try:
-        global dataset_paths
-        dataset_paths = al.load_dictionary()
-        al.count_random(dataset_paths)
-    except IOError:
-        pass
-    finally:
-        pass
     try:
         print("Welcome, I'm Aljuarismo, what can I do for you?")
         while True:

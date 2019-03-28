@@ -18,27 +18,3 @@ def id_session_creator():
     """
     return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
 
-
-def save_dictionary(dataset_paths):
-    """
-    Saves in a file the dataset file names and paths we had loaded in the previous or actual session
-    :return:
-    """
-    f = open("./resources/DictionaryDataset.txt", "w+")
-    for key, val in dataset_paths.items():
-        f.write(key + ',' + val + '\n')
-    f.close()
-
-
-def load_dictionary():
-    """
-    Load the file which contains the names and paths of the datasets that had been loaded in previous sessions
-    :return:
-    """
-    f = open("./resources/DictionaryDataset.txt", "r")
-    paths = {}
-    for line in f:
-        fields = line.split(",")
-        paths[fields[0]] = fields[1].rstrip()
-    f.close()
-    return paths

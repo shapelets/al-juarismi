@@ -13,7 +13,8 @@ import random as rng
 import click
 import pandas as pd
 
-num_rand = 0
+from aljuarismi import workspace_manager as wsp
+
 
 def ask_for_dataset_path():
     """
@@ -40,27 +41,27 @@ def load_dataset(loaded_datasets, dataset, path):
     :return: The loaded dataset
     """
     current_dataset = pd.read_csv(path + '/' + dataset + '.csv')
-    loaded_datasets[dataset] = current_dataset
+    loaded_datasets.set(dataset, current_dataset)
     return current_dataset
 
 
-def execute_load_dataset(parameters, loaded_datasets, dataset_paths):
+def execute_load_dataset(parameters, loaded_datasets):
     """
     Load the dataset
     :param parameters: The parameters which have the name of the dataset 
     :param loaded_datasets: The already loaded dataset
-    :param dataset_paths: The path of the datasets which have been loaded previously in this session or another
     :return: the loaded dataset
     """""
+    dataset_paths = wsp.create_instancer("dataset_locator")
     dataset_name = parameters['Dataset']
-    if dataset_name in loaded_datasets.keys():
+    if dataset_name in loaded_datasets.getall():
         data = loaded_datasets[dataset_name]
     else:
-        if dataset_name in dataset_paths.keys():
-            path = dataset_paths[dataset_name]
+        if dataset_name in dataset_paths.getall():
+            path = dataset_paths.get(dataset_name)
         else:
             path = ask_for_dataset_path()
-            dataset_paths[dataset_name] = path
+            dataset_paths.set(dataset_name, path)
         data = load_dataset(loaded_datasets, dataset_name, path)
     return data
 
@@ -72,16 +73,10 @@ def create_dataset(parameters, loaded_datasets):
     :param loaded_datasets: The already loaded dataset
     :return: A random dataset
     """
-    tt = pd.DataFrame([rng.randrange for n in range(50)])
-    loaded_datasets['random' + str(num_rand)] = tt
+    counters = wsp.create_instancer("counters")
+    num_rand = counters.get("num_rand")
+    tt = pd.DataFrame([rng.randrange(1, 100) for n in range(50)])
+    loaded_datasets.set('random' + str(num_rand), tt)
+    counters.set("num_rand", num_rand + 1)
     return tt
 
-
-def count_random(dataset_paths):
-    """
-    Count the number of randoms that had been saved in the previous sessions
-    :param dataset_paths: The path of the datasets which have been loaded previously in this session or another
-    :return:
-    """
-    global num_rand
-    num_rand = len(list(filter(lambda x: 'random' in x, dataset_paths)))
