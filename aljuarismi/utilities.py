@@ -10,6 +10,8 @@
 import random
 import string
 
+import pandas as pd
+
 
 def id_session_creator():
     """
@@ -18,3 +20,13 @@ def id_session_creator():
     """
     return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
 
+
+def obtain_dataset(database, dataset):
+    """
+    Finds in the database and converts the dataset from json to pandas
+    :param database: The database where it is located
+    :param dataset: The name of the dataset to find
+    :return: The dataset as a pandas
+    """
+    ds_json = database.get(dataset)
+    return pd.read_json(ds_json)

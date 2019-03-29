@@ -21,9 +21,6 @@ session_id = al.id_session_creator()
 language_code = 'en'
 current_dataset = None
 
-# Container for loaded datasets
-workspace = al.create_instancer("workspace")
-
 
 def detect_intent_text(project_id, session_id, text, language_code):
     """
@@ -64,22 +61,22 @@ def detect_intent_text(project_id, session_id, text, language_code):
     global current_dataset
 
     if response.query_result.intent.display_name == 'RandomDataset':
-        current_dataset = al.create_dataset(parameters, workspace)
+        current_dataset = al.create_dataset(parameters)
 
     elif response.query_result.intent.display_name == 'LoadDataset':
-        current_dataset = al.execute_load_dataset(parameters, workspace)
+        current_dataset = al.execute_load_dataset(parameters)
 
     elif response.query_result.intent.display_name == 'ShowResult':
-        al.execute_plot(current_dataset)
+        al.execute_plot(current_dataset, parameters)
 
     elif response.query_result.intent.display_name == 'PrintResult':
-        pass
+        al.execute_print(current_dataset, parameters)
 
     elif response.query_result.intent.display_name == 'DoOperations':
-        current_dataset = al.do_op(parameters, current_dataset, workspace)
+        current_dataset = al.do_op(parameters, current_dataset)
 
     elif response.query_result.intent.display_name == 'Exit - yes':
-        al.exiting_yes(workspace, response.query_result.fulfillment_text)
+        al.exiting_yes(response.query_result.fulfillment_text)
 
     elif response.query_result.intent.display_name == 'Exit - no':
         al.exiting_no(response.query_result.fulfillment_text)

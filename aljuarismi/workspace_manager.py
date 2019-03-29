@@ -7,7 +7,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import pandas as pd
 import pickledb as pdb
 
 
@@ -18,11 +17,7 @@ def create_instancer(type):
     :return: The loaded database
     """
     if type == "workspace":
-        ws = pdb.load('resources/workspace.db', False)
-        for key in ws.getall():
-            val = ws.get(key)
-            ws.set(key, pd.read_json(val))
-        return ws
+        return pdb.load('resources/workspace.db', True)
     if type == "dataset_locator":
         return pdb.load('resources/dataset_locator.db', True)
     if type == "counters":

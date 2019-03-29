@@ -10,7 +10,7 @@
 import aljuarismi as al
 
 
-def do_op(parameters, dataset, workspace):
+def do_op(parameters, dataset):
     op = parameters.pop("Operations")
     if op == "reduction_points":
         data = al.reduce_datapoints(dataset.values, parameters)
@@ -20,4 +20,6 @@ def do_op(parameters, dataset, workspace):
         counters = al.create_instancer("counters")
         c = counters.get("count")
         workspace.set("val" + str(c), data.to_json())
+        print('Saved as val' + str(c))
+        counters.set("count", c + 1)
         return data
