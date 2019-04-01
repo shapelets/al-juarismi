@@ -23,6 +23,7 @@ def ask_for_dataset_path():
     :return: The path introduced
     """
     print('Where is it located?')
+    ut.voice('Where is it located?')
     query = ''
     while query == '' or query == 'here':
         query = click.prompt('')
@@ -73,10 +74,17 @@ def create_dataset(parameters):
     :return: A random dataset
     """
     print('Creating the random dataset')
+    ut.voice('Creating the random dataset')
     counters = wsp.create_instancer("counters")
     num_rand = counters.get("num_rand")
-    tt = pd.DataFrame([rng.randrange(1, 100) for n in range(50)])
+    tt = None
+    if list(filter(lambda x: x == '' or [], list(parameters.values()))):
+        tt = pd.DataFrame([rng.randrange(1, 100) for n in range(50)])
+    else:
+        pass
+
     wsp.create_instancer("workspace").set('random' + str(num_rand), tt.to_json())
     print("Created and saved as random" + str(num_rand))
+    ut.voice("Created and saved as random" + str(num_rand))
     counters.set("num_rand", num_rand + 1)
     return tt

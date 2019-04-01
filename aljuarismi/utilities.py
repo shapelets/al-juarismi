@@ -11,6 +11,7 @@ import random
 import string
 
 import pandas as pd
+import pyttsx3 as tts
 
 
 def id_session_creator():
@@ -30,3 +31,9 @@ def obtain_dataset(database, dataset):
     """
     ds_json = database.get(dataset)
     return pd.read_json(ds_json)
+
+
+def voice(txt):
+    v = tts.init()
+    v.say(txt)
+    v.runAndWait()

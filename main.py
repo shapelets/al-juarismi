@@ -82,6 +82,7 @@ def detect_intent_text(project_id, session_id, text, language_code):
         al.exiting_no(response.query_result.fulfillment_text)
 
     print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
+    al.voice(response.query_result.fulfillment_text)
 
 
 def main(*args, **kwargs):

@@ -8,23 +8,32 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 import os
 
+from aljuarismi import utilities as ut
 from aljuarismi import workspace_manager as wpm
 
 
 def exiting_yes(response):
     print('Saving the workspace')
+    ut.voice('Saving the workspace')
     print('Saved workspace')
+    ut.voice('Saved workspace')
     print('DEBUG: Fulfillment text: {}'.format(response))
+    ut.voice(response)
     print('Closing program')
+    ut.voice('Closing program')
     exit()
 
 
 def exiting_no(response):
     print('Deleting workspace')
+    ut.voice('Deleting workspace')
     restart()
     print('Deleted workspace')
+    ut.voice('Deleted workspace')
     print('DEBUG: Fulfillment text: {}'.format(response))
+    ut.voice(response)
     print('Closing program')
+    ut.voice('Closing program')
     exit()
 
 

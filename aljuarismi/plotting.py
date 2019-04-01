@@ -11,6 +11,7 @@ import click
 import matplotlib.pyplot as plt
 
 from aljuarismi import datasets as dt
+from aljuarismi import utilities as ut
 
 
 def plot_dataset(dataset, parameters):
@@ -25,9 +26,11 @@ def plot_dataset(dataset, parameters):
     if ncol - 1 > 1:
         if parameters["columns"] == []:
             print("I have more than one column available, which is the one to be selected?")
+            ut.voice("I have more than one column available, which is the one to be selected?")
             print(list(dataset.columns.values))
             column_name = ''
             while column_name == '':
+                ut.voice('Which column do you want to plot?')
                 column_name = click.prompt('Which column do you want to plot?', type=str)
                 click.echo('DEBUG: %s' % column_name)
             plt.figure()
