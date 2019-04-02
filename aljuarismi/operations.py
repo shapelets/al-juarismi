@@ -11,15 +11,29 @@ import aljuarismi as al
 
 
 def do_op(parameters, dataset):
+    # Workspace().set("redux", data)
+
     op = parameters.pop("Operations")
     if op == "reduction_points":
+        # Calling khiva
+        c = al.Workspace().get_counter('redux')
         data = al.reduce_datapoints(dataset.values, parameters)
+        al.Workspace().save_dataset("redux" + str(c), data)
 
-        # workspace.set("redux", data)
-        workspace = al.create_instancer("workspace")
-        counters = al.create_instancer("counters")
-        c = counters.get("count")
-        workspace.set("val" + str(c), data.to_json())
-        print('Saved as val' + str(c))
-        counters.set("count", c + 1)
-        return data
+        print('The reduction of points is stored as redux' + str(c))
+
+
+def do_clustering(parameters, dataset):
+    op = parameters.pop("operation")
+    if parameters["Dataset"]:
+        dataset = al.Workspace().get_dataset(parameters["Dataset"])
+
+    if op == "kmeans":
+        data = al.kmean(dataset.values, parameters)
+        var = al.Workspace().get_counter('var')
+        al.Workspace().save_dataset('var' + str(var), data)
+
+    elif op == "kshape":
+        data = al.kshape(dataset.values, parameters)
+        var = al.Workspace().get_counter('var')
+        al.Workspace().save_dataset('var' + str(var), data)

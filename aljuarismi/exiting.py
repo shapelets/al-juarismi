@@ -6,40 +6,31 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
-import os
 
-from aljuarismi import utilities as ut
-from aljuarismi import workspace_manager as wpm
+import aljuarismi as al
 
 
 def exiting_yes(response):
     print('Saving the workspace')
-    ut.voice('Saving the workspace')
+    al.voice('Saving the workspace')
     print('Saved workspace')
-    ut.voice('Saved workspace')
+    al.voice('Saved workspace')
     print('DEBUG: Fulfillment text: {}'.format(response))
-    ut.voice(response)
+    al.voice(response)
     print('Closing program')
-    ut.voice('Closing program')
+    al.voice('Closing program')
     exit()
 
 
 def exiting_no(response):
     print('Deleting workspace')
-    ut.voice('Deleting workspace')
-    restart()
+    al.voice('Deleting workspace')
+    al.Workspace().clean_workspace()
     print('Deleted workspace')
-    ut.voice('Deleted workspace')
+    al.voice('Deleted workspace')
     print('DEBUG: Fulfillment text: {}'.format(response))
-    ut.voice(response)
+    al.voice(response)
     print('Closing program')
-    ut.voice('Closing program')
+    al.voice('Closing program')
     exit()
 
-
-def restart():
-    path = os.path.realpath(os.path.dirname(__file__))
-    os.remove(path + "/../resources/workspace.db")
-    counters = wpm.create_instancer("counters")
-    for key in counters.getall():
-        counters.set(key, 0)
