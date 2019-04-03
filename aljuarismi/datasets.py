@@ -37,7 +37,7 @@ def ask_for_dataset_path():
 def execute_load_dataset(parameters):
     """
     Load the dataset
-    :param parameters: The parameters which have the name of the dataset 
+    :param parameters: The parameters which have the name of the dataset.
     :return: the loaded dataset
     """""
     dataset_name = parameters['Dataset']

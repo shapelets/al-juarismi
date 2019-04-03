@@ -16,9 +16,16 @@ import pickledb as pdb
 class Workspace:
 
     def __init__(self):
-        datasets_path = 'resources/datasets.db'
-        counters_path = 'resources/counters.db'
-        dataset_locator_path = 'resources/dataset_locator.db'
+        self.path = os.getcwd()
+        self.path_resources = self.path + "/resources"
+
+        if not os.path.exists(self.path_resources):
+            os.mkdir(self.path_resources)
+
+        datasets_path = self.path_resources + '/datasets.db'
+        counters_path = self.path_resources + '/counters.db'
+        dataset_locator_path = self.path_resources + '/dataset_locator.db'
+
         self.__datasets = pdb.load(datasets_path, True)
         self.__counters = pdb.load(counters_path, True)
         self.__dataset_locator = pdb.load(dataset_locator_path, True)
@@ -29,8 +36,7 @@ class Workspace:
         :return:
         """
         self.remove_all()
-        path = os.path.realpath(os.path.dirname(__file__))
-        os.remove(path + "/../resources/dataset_locator.db")
+        self.__dataset_locator.deldb()
 
     def save_dataset(self, name, dataset, path=''):
         """
@@ -71,10 +77,8 @@ class Workspace:
         Remove all datasets stored in the workspace
         :return:
         """
-        path = os.path.realpath(os.path.dirname(__file__))
-        os.remove(path + "/../resources/datasets.db")
-        for key in self.__counters.getall():
-            self.__counters.set(key, 0)
+        self.__datasets.deldb()
+        self.__counters.deldb()
 
     def get_dataset_count(self, name):
         """
@@ -107,3 +111,12 @@ class Workspace:
         num = self.__counters.get(name)
         self.__counters.set(name, num + 1)
         return num
+
+    def save_dataset_path(self, dataset_name, dataset_path):
+        """
+
+        :param dataset_name:
+        :param dataset_path:
+        :return:
+        """
+        self.__dataset_locator.set(dataset_name, dataset_path)

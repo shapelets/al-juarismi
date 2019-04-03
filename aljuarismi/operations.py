@@ -37,3 +37,5 @@ def do_clustering(parameters, dataset):
         data = al.kshape(dataset.values, parameters)
         var = al.Workspace().get_counter('var')
         al.Workspace().save_dataset('var' + str(var), data)
+
+    print("It is stored as var" + str(var))

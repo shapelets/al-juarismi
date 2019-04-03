@@ -8,6 +8,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import json
+import os
 import sys
 
 import click
@@ -99,6 +100,8 @@ def detect_intent_text(project_id, session_id, text, language_code):
 
 def main(*args, **kwargs):
     try:
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/franco.gonzalez/Desktop/Credentials/" \
+                                                       "Aljuaritmo-3ac32e58ff41.json"
         print("Welcome, I'm Aljuarismo, what can I do for you?")
         while True:
             query = click.prompt('')
