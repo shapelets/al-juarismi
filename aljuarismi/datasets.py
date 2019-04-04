@@ -11,19 +11,19 @@ import os
 import random as rng
 
 import click
+import numpy as np
 import pandas as pd
 
-from aljuarismi import utilities as ut
-from aljuarismi import workspace_manager as wsp
+import aljuarismi as al
 
 
 def ask_for_dataset_path():
     """
-    Ask for the dataset path
-    :return: The path introduced
+    Ask for the dataset path.
+    :return: The path introduced.
     """
     print('Where is it located?')
-    ut.voice('Where is it located?')
+    al.voice('Where is it located?')
     query = ''
     while query == '' or query == 'here':
         query = click.prompt('')
@@ -34,57 +34,51 @@ def ask_for_dataset_path():
     return path
 
 
-def load_dataset(dataset, path):
+def load_dataset(parameters):
     """
-    Load the dataset
-    :param dataset: The name of the dataset to load
-    :param path: The path where it is located the dataset to load
-    :return: The loaded dataset
-    """
-    current_dataset = pd.read_csv(path + '/' + dataset + '.csv')
-    wsp.create_instancer("workspace").set(dataset, current_dataset.to_json())
-    return current_dataset
-
-
-def execute_load_dataset(parameters):
-    """
-    Load the dataset
-    :param parameters: The parameters which have the name of the dataset 
-    :return: the loaded dataset
+    Load the dataset.
+    :param parameters: The parameters which have the name of the dataset.
+    :return: The loaded dataset.
     """""
-    dataset_paths = wsp.create_instancer("dataset_locator")
-    loaded_datasets = wsp.create_instancer("workspace")
     dataset_name = parameters['Dataset']
-    if dataset_name in loaded_datasets.getall():
-        data = ut.obtain_dataset(loaded_datasets, dataset_name)
+
+    if dataset_name in al.Workspace().get_all_dataset():
+        data = al.Workspace().get_dataset(dataset_name)
     else:
-        if dataset_name in dataset_paths.getall():
-            path = dataset_paths.get(dataset_name)
+        if dataset_name in al.Workspace().get_all_dataset_paths():
+            path = al.Workspace().get_dataset_path(dataset_name)
         else:
             path = ask_for_dataset_path()
-            dataset_paths.set(dataset_name, path)
-        data = load_dataset(dataset_name, path)
+        data = pd.read_csv(path + '/' + dataset_name + '.csv')
+        al.Workspace().save_dataset(dataset_name, data, path)
     return data
 
 
 def create_dataset(parameters):
     """
-    Creates a random dataset and saves it with the loaded ones
-    :param parameters: The parameters
-    :return: A random dataset
+    Creates a random dataset and saves it.
+    :param parameters: The parameters for the creation (number of rows, numbers of columns,...).
+    :return: A random dataset.
     """
     print('Creating the random dataset')
-    ut.voice('Creating the random dataset')
-    counters = wsp.create_instancer("counters")
-    num_rand = counters.get("num_rand")
-    tt = None
-    if list(filter(lambda x: x == '' or [], list(parameters.values()))):
+    al.voice('Creating the random dataset')
+    if list(filter(lambda x: x != '' or [], list(parameters.values()))) == [[]]:
         tt = pd.DataFrame([rng.randrange(1, 100) for n in range(50)])
     else:
-        pass
+        num_rows, num_col, values = 50, 1, [0, 100]
+        if parameters["columns"]:
+            num_col = int(parameters["columns"])
+        if parameters["rows"]:
+            num_rows = int(parameters["rows"])
+        if parameters["values"]:
+            values = parameters["values"]
 
-    wsp.create_instancer("workspace").set('random' + str(num_rand), tt.to_json())
-    print("Created and saved as random" + str(num_rand))
-    ut.voice("Created and saved as random" + str(num_rand))
-    counters.set("num_rand", num_rand + 1)
+        tt = pd.DataFrame(index=range(num_rows))
+        for n in range(num_col):
+            tt['col' + str(n)] = pd.DataFrame(np.random.random_integers(values[0], values[1], num_rows),
+                                              dtype='float32')
+    rand = al.Workspace().get_counter('rand')
+    al.Workspace().save_dataset('random' + str(rand), tt)
+    print("Created and saved as random" + str(rand))
+    al.voice("Created and saved as random" + str(rand))
     return tt

@@ -64,7 +64,7 @@ def detect_intent_text(project_id, session_id, text, language_code):
         current_dataset = al.create_dataset(parameters)
 
     elif response.query_result.intent.display_name == 'LoadDataset':
-        current_dataset = al.execute_load_dataset(parameters)
+        current_dataset = al.load_dataset(parameters)
 
     elif response.query_result.intent.display_name == 'ShowResult':
         al.execute_plot(current_dataset, parameters)
@@ -73,7 +73,10 @@ def detect_intent_text(project_id, session_id, text, language_code):
         al.execute_print(current_dataset, parameters)
 
     elif response.query_result.intent.display_name == 'DoOperations':
-        current_dataset = al.do_op(parameters, current_dataset)
+        al.do_op(parameters, current_dataset)
+
+    elif response.query_result.intent.display_name == 'DoClustering':
+        al.do_clustering(parameters, current_dataset)
 
     elif response.query_result.intent.display_name == 'Exit - yes':
         al.exiting_yes(response.query_result.fulfillment_text)
@@ -82,11 +85,11 @@ def detect_intent_text(project_id, session_id, text, language_code):
         al.exiting_no(response.query_result.fulfillment_text)
 
     print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
-    al.voice(response.query_result.fulfillment_text)
+    if response.query_result.fulfillment_text:
+        al.voice(response.query_result.fulfillment_text)
 
 
 def main(*args, **kwargs):
-
     try:
         print("Welcome, I'm Aljuarismo, what can I do for you?")
         while True:

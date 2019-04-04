@@ -10,27 +10,25 @@
 import click
 import matplotlib.pyplot as plt
 
-from aljuarismi import datasets as dt
-from aljuarismi import utilities as ut
+import aljuarismi as al
 
 
 def plot_dataset(dataset, parameters):
     """
-    Plots graphically a column of the dataset
-    :param dataset: The current dataset
-    :param parameters: The parameter for the graphic
+    Plots graphically a column of the dataset.
+    :param dataset: The current dataset.
+    :param parameters: The parameter for the graphic.
     :return:
     """
-    name = ''
     ncol = dataset.columns.size
     if ncol - 1 > 1:
-        if parameters["columns"] == []:
+        if not parameters["columns"]:
             print("I have more than one column available, which is the one to be selected?")
-            ut.voice("I have more than one column available, which is the one to be selected?")
+            al.voice("I have more than one column available, which is the one to be selected?")
             print(list(dataset.columns.values))
             column_name = ''
             while column_name == '':
-                ut.voice('Which column do you want to plot?')
+                al.voice('Which column do you want to plot?')
                 column_name = click.prompt('Which column do you want to plot?', type=str)
                 click.echo('DEBUG: %s' % column_name)
             plt.figure()
@@ -47,20 +45,20 @@ def plot_dataset(dataset, parameters):
     else:
         plt.figure()
         plt.plot(dataset.values)
-        plt.title('Series')
+        plt.title(parameters["Dataset"])
         plt.show(block=False)
 
 
 def execute_plot(current_dataset, parameters):
     """
-    Execute the function plot
-    :param current_dataset: The current dataset
-    :param parameters: The parameters for the graphic (dataset name, intervals,...)
+    Execute the function plot.
+    :param current_dataset: The current dataset.
+    :param parameters: The parameters for the graphic (dataset name, intervals,...).
     :return:
     """
     data_name = parameters["Dataset"]
     if data_name == '' or data_name == 'current_dataset':
         plot_dataset(current_dataset, parameters)
     else:
-        dataset = dt.execute_load_dataset(parameters)
+        dataset = al.Workspace().get_dataset(data_name)
         plot_dataset(dataset, parameters)
