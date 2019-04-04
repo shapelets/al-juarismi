@@ -15,9 +15,9 @@ import aljuarismi as al
 
 def plot_dataset(dataset, parameters):
     """
-    Plots graphically a column of the dataset
-    :param dataset: The current dataset
-    :param parameters: The parameter for the graphic
+    Plots graphically a column of the dataset.
+    :param dataset: The current dataset.
+    :param parameters: The parameter for the graphic.
     :return:
     """
     ncol = dataset.columns.size
@@ -51,9 +51,9 @@ def plot_dataset(dataset, parameters):
 
 def execute_plot(current_dataset, parameters):
     """
-    Execute the function plot
-    :param current_dataset: The current dataset
-    :param parameters: The parameters for the graphic (dataset name, intervals,...)
+    Execute the function plot.
+    :param current_dataset: The current dataset.
+    :param parameters: The parameters for the graphic (dataset name, intervals,...).
     :return:
     """
     data_name = parameters["Dataset"]

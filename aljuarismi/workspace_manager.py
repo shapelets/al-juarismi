@@ -41,8 +41,9 @@ class Workspace:
     def save_dataset(self, name, dataset, path=''):
         """
         Stores a dataset with the given name.
-        :param name:
-        :param dataset:
+        :param name: The name of the dataset.
+        :param dataset: The object dataset.
+        :param path: The path where is located the dataset. (By default is a empty string).
         :return:
         """
         if path:
@@ -51,72 +52,73 @@ class Workspace:
 
     def get_dataset(self, name):
         """
-        Returns the dataset corresponding to name.
-        :param name:
-        :return:
+        Returns a dataset.
+        :param name: The name of the dataset.
+        :return: The object dataset.
         """
-        return pd.read_json(self.__datasets.get(name))
+
+        data = self.__datasets.get(name)
+        if data:
+            return pd.read_json(self.__datasets.get(name))
+        else:
+            print(' The dataset or object you want to obtain does not exist')
+            return None
 
     def remove_dataset(self, name):
         """
-        Removes the dataset with name.
-        :param name:
+        Removes a dataset.
+        :param name: The name of the dataset.
         :return:
         """
         self.__datasets.rem(name)
 
     def get_all_dataset(self):
         """
-        Returns all datasets stored in workspace.
+        Returns all datasets stored in dataset.
         :return:
         """
         return self.__datasets.getall()
 
     def remove_all(self):
         """
-        Remove all datasets stored in the workspace
+        Remove all datasets stored in the workspace.
         :return:
         """
         self.__datasets.deldb()
         self.__counters.deldb()
 
-    def get_dataset_count(self, name):
-        """
-
-        :return:
-        """
-        return self.__counters.get(name)
-
     def get_dataset_path(self, name):
         """
-
-        :param name:
-        :return:
+        Obtains the path where is located a dataset.
+        :param name: The name of the dataset.
+        :return: The path of a dataset.
         """
         return self.__dataset_locator.get(name)
 
     def get_all_dataset_paths(self):
         """
-
+        Obtains all the names of the datasets which have a stored path.
         :return:
         """
         return self.__dataset_locator.getall()
 
     def get_counter(self, name):
         """
-
-        :param name:
-        :return:
+        Obtains the number of a counter and increment that counter.
+        :param name: The name of the counter.
+        :return: The number of the counter.
         """
         num = self.__counters.get(name)
+        if not num:
+            num = 0
         self.__counters.set(name, num + 1)
         return num
 
     def save_dataset_path(self, dataset_name, dataset_path):
         """
-
-        :param dataset_name:
-        :param dataset_path:
+        Saves only the path where the dataset is located.
+        :param dataset_name: The name of the dataset.
+        :param dataset_path: The path where is located the dataset.
         :return:
         """
         self.__dataset_locator.set(dataset_name, dataset_path)

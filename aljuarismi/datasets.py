@@ -19,8 +19,8 @@ import aljuarismi as al
 
 def ask_for_dataset_path():
     """
-    Ask for the dataset path
-    :return: The path introduced
+    Ask for the dataset path.
+    :return: The path introduced.
     """
     print('Where is it located?')
     al.voice('Where is it located?')
@@ -34,11 +34,11 @@ def ask_for_dataset_path():
     return path
 
 
-def execute_load_dataset(parameters):
+def load_dataset(parameters):
     """
-    Load the dataset
+    Load the dataset.
     :param parameters: The parameters which have the name of the dataset.
-    :return: the loaded dataset
+    :return: The loaded dataset.
     """""
     dataset_name = parameters['Dataset']
 
@@ -56,22 +56,27 @@ def execute_load_dataset(parameters):
 
 def create_dataset(parameters):
     """
-    Creates a random dataset and saves it with the loaded ones
-    :param parameters: The parameters
-    :return: A random dataset
+    Creates a random dataset and saves it.
+    :param parameters: The parameters for the creation (number of rows, numbers of columns,...).
+    :return: A random dataset.
     """
     print('Creating the random dataset')
     al.voice('Creating the random dataset')
-    tt = None
     if list(filter(lambda x: x != '' or [], list(parameters.values()))) == [[]]:
         tt = pd.DataFrame([rng.randrange(1, 100) for n in range(50)])
     else:
+        num_rows, num_col, values = 50, 1, [0, 100]
         if parameters["columns"]:
-            stack = np.array([rng.randrange(1, 100) for n in range(50)])
-            for n in range(int(parameters["columns"]) - 1):
-                rand = np.array([rng.randrange(1, 100) for n in range(50)])
-                stack = np.vstack([stack, rand])
-            tt = pd.DataFrame(stack)
+            num_col = int(parameters["columns"])
+        if parameters["rows"]:
+            num_rows = int(parameters["rows"])
+        if parameters["values"]:
+            values = parameters["values"]
+
+        tt = pd.DataFrame(index=range(num_rows))
+        for n in range(num_col):
+            tt['col' + str(n)] = pd.DataFrame(np.random.random_integers(values[0], values[1], num_rows),
+                                              dtype='float32')
     rand = al.Workspace().get_counter('rand')
     al.Workspace().save_dataset('random' + str(rand), tt)
     print("Created and saved as random" + str(rand))

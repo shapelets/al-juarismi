@@ -8,7 +8,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import json
-import os
 import sys
 
 import click
@@ -65,7 +64,7 @@ def detect_intent_text(project_id, session_id, text, language_code):
         current_dataset = al.create_dataset(parameters)
 
     elif response.query_result.intent.display_name == 'LoadDataset':
-        current_dataset = al.execute_load_dataset(parameters)
+        current_dataset = al.load_dataset(parameters)
 
     elif response.query_result.intent.display_name == 'ShowResult':
         al.execute_plot(current_dataset, parameters)
@@ -85,14 +84,6 @@ def detect_intent_text(project_id, session_id, text, language_code):
     elif response.query_result.intent.display_name == 'Exit - no':
         al.exiting_no(response.query_result.fulfillment_text)
 
-    """
-    workspace = al.create_instancer("workspace")
-    counters = al.create_instancer("counters")
-    count = counters.get("count")
-    data_json = workspace.get("val"+str(count))
-    current_dataset = pd.read_json(data_json)
-    """
-
     print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
     if response.query_result.fulfillment_text:
         al.voice(response.query_result.fulfillment_text)
@@ -100,8 +91,6 @@ def detect_intent_text(project_id, session_id, text, language_code):
 
 def main(*args, **kwargs):
     try:
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/franco.gonzalez/Desktop/Credentials/" \
-                                                       "Aljuaritmo-3ac32e58ff41.json"
         print("Welcome, I'm Aljuarismo, what can I do for you?")
         while True:
             query = click.prompt('')

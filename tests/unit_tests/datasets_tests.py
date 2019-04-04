@@ -11,6 +11,7 @@
 import json
 import os
 import unittest
+import warnings
 
 import dialogflow_v2 as dialogflow
 import pandas as pd
@@ -27,13 +28,23 @@ def response(self, txt):
     return json.loads(response_json)
 
 
-class DatasetTests(unittest.TestCase):
+def ignore_warnings(test_func):
+    def do_test(self, *args, **kwargs):
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            test_func(self, *args, **kwargs)
 
+    return do_test
+
+
+class DatasetTests(unittest.TestCase):
+    session_id = al.id_session_creator()
+
+    @ignore_warnings
     def setUp(self):
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/franco.gonzalez/Desktop/Credentials/" \
                                                        "Aljuaritmo-3ac32e58ff41.json"
         self.project_id = "aljuaritmo"
-        self.session_id = al.id_session_creator()
         self.language_code = "en"
         self.session_client = dialogflow.SessionsClient()
         self.session = self.session_client.session_path(self.project_id, self.session_id)
@@ -41,6 +52,7 @@ class DatasetTests(unittest.TestCase):
         self.workspace = al.Workspace()
         self.workspace.save_dataset_path('titanic', '../../datasets')
 
+    @ignore_warnings
     def test_load_dataset(self):
         order = "load dataset titanic"
 
@@ -50,21 +62,67 @@ class DatasetTests(unittest.TestCase):
         self.assertEqual(data['queryResult']['intentDetectionConfidence'], 1.0)
         self.assertEqual(data['queryResult']['parameters']['Dataset'], 'titanic')
 
-        dataset = al.execute_load_dataset(data['queryResult']['parameters'])
+        dataset = al.load_dataset(data['queryResult']['parameters'])
         titanic = pd.read_csv("../../datasets/titanic.csv")
         self.assertEqual(dataset.to_json(), titanic.to_json())
 
+    @ignore_warnings
     def test_create_random_not_param(self):
         order = "Create random dataset"
 
         data = response(self, order)
 
         self.assertEqual(data['queryResult']['intent']['displayName'], 'RandomDataset')
-        self.assertEqual(data['queryResult']['intentDetectionConfidence'], 1.0)
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.9)
         random = al.create_dataset(data['queryResult']['parameters'])
         self.assertEqual(random.size, 50)
-        self.assertIn(random.values.all(), range(0, 50))
+        self.assertGreaterEqual(random.values.min(), 0)
+        self.assertLessEqual(random.values.max(), 100)
 
+    @ignore_warnings
+    def test_create_random_num_columns(self):
+        order = " create random dataset for 5 columns"
+
+        data = response(self, order)
+
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'RandomDataset')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
+        random = al.create_dataset(data['queryResult']['parameters'])
+        self.assertEqual(random.shape, (50, int(data['queryResult']['parameters']['columns'])), '(n_row, n_column) do'
+                                                                                                ' not match')
+        self.assertGreaterEqual(random.values.min(), 0)
+        self.assertLessEqual(random.values.max(), 100)
+
+    @ignore_warnings
+    def test_create_random_num_rows(self):
+        order = " create random dataset for 5 rows"
+
+        data = response(self, order)
+
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'RandomDataset')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
+        random = al.create_dataset(data['queryResult']['parameters'])
+        self.assertEqual(random.shape, (int(data['queryResult']['parameters']['rows']), 1), '(n_row, n_column) do'
+                                                                                            ' not match')
+        self.assertGreaterEqual(random.values.min(), 0)
+        self.assertLessEqual(random.values.max(), 100)
+
+    @ignore_warnings
+    def test_create_random_num_rows_and_columns(self):
+        order = "create random dataset for 5 row and 10 columns"
+
+        data = response(self, order)
+
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'RandomDataset')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
+        random = al.create_dataset(data['queryResult']['parameters'])
+        self.assertEqual(random.shape, (int(data['queryResult']['parameters']['rows']),
+                                        int(data['queryResult']['parameters']['columns'])),
+                         '(n_row, n_column) do not match')
+        self.assertGreaterEqual(random.values.min(), 0)
+        self.assertLessEqual(random.values.max(), 100)
+
+    @ignore_warnings
     def tearDown(self):
         self.workspace.clean_workspace()
 

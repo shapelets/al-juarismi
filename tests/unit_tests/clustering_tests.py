@@ -37,7 +37,7 @@ def ignore_warnings(test_func):
     return do_test
 
 
-class DatasetTests(unittest.TestCase):
+class ClusteringTests(unittest.TestCase):
     session_id = al.id_session_creator()
 
     @ignore_warnings
@@ -161,5 +161,5 @@ class DatasetTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(DatasetTests)
+    suite = unittest.TestLoader().loadTestsFromTestCase(ClusteringTests)
     unittest.TextTestRunner(verbosity=2).run(suite)

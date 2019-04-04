@@ -11,7 +11,12 @@ import aljuarismi as al
 
 
 def do_op(parameters, dataset):
-    # Workspace().set("redux", data)
+    """
+    Do a operation of dimensionality.
+    :param parameters: The parameters of the function (name of the operation, ...).
+    :param dataset: The current dataset.
+    :return:
+    """
 
     op = parameters.pop("Operations")
     if op == "reduction_points":
@@ -24,18 +29,27 @@ def do_op(parameters, dataset):
 
 
 def do_clustering(parameters, dataset):
+    """
+    Do a operation of clustering.
+    :param parameters: The parameters of the function (name of the operation, number of clusters, ...).
+    :param dataset: The current dataset.
+    :return:
+    """
     op = parameters.pop("operation")
     if parameters["Dataset"]:
         dataset = al.Workspace().get_dataset(parameters["Dataset"])
 
     if op == "kmeans":
-        data = al.kmean(dataset.values, parameters)
-        var = al.Workspace().get_counter('var')
-        al.Workspace().save_dataset('var' + str(var), data)
+        (centroids, labels) = al.kmean(dataset.values, parameters)
+        number = al.Workspace().get_counter('var')
+        al.Workspace().save_dataset('centroids' + str(number), centroids)
+        al.Workspace().save_dataset('labels' + str(number), labels)
 
     elif op == "kshape":
-        data = al.kshape(dataset.values, parameters)
-        var = al.Workspace().get_counter('var')
-        al.Workspace().save_dataset('var' + str(var), data)
+        (centroids, labels) = al.kshape(dataset.values, parameters)
+        number = al.Workspace().get_counter('var')
+        al.Workspace().save_dataset('centroids' + str(number), centroids)
+        al.Workspace().save_dataset('labels' + str(number), labels)
 
-    print("It is stored as var" + str(var))
+    print("The centroids are stored in centroids" + str(number))
+    print("The labels are stored in labels" + str(number))
