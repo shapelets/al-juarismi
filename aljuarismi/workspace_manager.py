@@ -61,7 +61,7 @@ class Workspace:
         if data:
             return pd.read_json(self.__datasets.get(name))
         else:
-            print(' The dataset or object you want to obtain does not exist')
+            print('The dataset or object you want to obtain does not exist in the workspace')
             return None
 
     def remove_dataset(self, name):
@@ -122,3 +122,10 @@ class Workspace:
         :return:
         """
         self.__dataset_locator.set(dataset_name, dataset_path)
+
+    def has_any_dataset(self):
+        """
+        Sees if the database of datasets has any dataset saved
+        :return:
+        """
+        return self.__datasets.totalkeys() > 0

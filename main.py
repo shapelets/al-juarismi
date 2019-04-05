@@ -8,6 +8,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import json
+import re
 import sys
 
 import click
@@ -66,23 +67,26 @@ def detect_intent_text(project_id, session_id, text, language_code):
     elif response.query_result.intent.display_name == 'LoadDataset':
         current_dataset = al.load_dataset(parameters)
 
-    elif response.query_result.intent.display_name == 'ShowResult':
-        al.execute_plot(current_dataset, parameters)
-
-    elif response.query_result.intent.display_name == 'PrintResult':
-        al.execute_print(current_dataset, parameters)
-
-    elif response.query_result.intent.display_name == 'DoOperations':
-        al.do_op(parameters, current_dataset)
-
-    elif response.query_result.intent.display_name == 'DoClustering':
-        al.do_clustering(parameters, current_dataset)
-
     elif response.query_result.intent.display_name == 'Exit - yes':
         al.exiting_yes(response.query_result.fulfillment_text)
 
     elif response.query_result.intent.display_name == 'Exit - no':
         al.exiting_no(response.query_result.fulfillment_text)
+
+    elif not re.search("^Default|Exit", response.query_result.intent.display_name):
+        if al.check_current_dataset(current_dataset):
+
+            if response.query_result.intent.display_name == 'ShowResult':
+                al.execute_plot(current_dataset, parameters)
+
+            elif response.query_result.intent.display_name == 'PrintResult':
+                al.execute_print(current_dataset, parameters)
+
+            elif response.query_result.intent.display_name == 'DoOperations':
+                al.do_op(parameters, current_dataset)
+
+            elif response.query_result.intent.display_name == 'DoClustering':
+                al.do_clustering(parameters, current_dataset)
 
     print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
     if response.query_result.fulfillment_text:
