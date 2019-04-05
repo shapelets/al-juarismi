@@ -24,13 +24,14 @@ def ask_for_dataset_path():
     """
     print('Where is it located?')
     al.voice('Where is it located?')
+    print('Actual path is ' + os.getcwd())
     query = ''
-    while query == '' or query == 'here':
+    while query == '':
         query = click.prompt('')
-    if query != 'here':
-        path = query
-    else:
+    if query == 'here':
         path = os.getcwd()
+    else:
+        path = query
     return path
 
 
@@ -48,6 +49,11 @@ def load_dataset(parameters):
         if dataset_name in al.Workspace().get_all_dataset_paths():
             path = al.Workspace().get_dataset_path(dataset_name)
         else:
+            path = ask_for_dataset_path()
+
+        while not os.path.exists(path + '/' + dataset_name + '.csv'):
+            print("Invalid path")
+            print("Please introduce a valid one")
             path = ask_for_dataset_path()
         data = pd.read_csv(path + '/' + dataset_name + '.csv')
         al.Workspace().save_dataset(dataset_name, data, path)
