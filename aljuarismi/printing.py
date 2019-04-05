@@ -21,6 +21,4 @@ def execute_print(dataset, parameters):
     data_name = parameters["Dataset"]
     if data_name:
         dataset = workspace.get_dataset(data_name)
-        if dataset is None:
-            return
     print(dataset)
