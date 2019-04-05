@@ -10,33 +10,55 @@
 import click
 import matplotlib.pyplot as plt
 
+import aljuarismi as al
 
-def plot_dataset(dataset):
+
+def plot_dataset(dataset, parameters):
     """
-    Plots graphically a column of the dataset
-    :param dataset: the current dataset
+    Plots graphically a column of the dataset.
+    :param dataset: The current dataset.
+    :param parameters: The parameter for the graphic.
     :return:
     """
-    name = ''
     ncol = dataset.columns.size
     if ncol - 1 > 1:
-        print("I have more than one column available, which is the one to be selected?")
-        print(list(dataset.columns.values))
-        column_name = ''
-        while column_name == '':
-            column_name = click.prompt('Which column do you want to plot?', type=str)
-            click.echo('DEBUG: %s' % column_name)
+        if not parameters["columns"]:
+            print("I have more than one column available, which is the one to be selected?")
+            al.voice("I have more than one column available, which is the one to be selected?")
+            print(list(dataset.columns.values))
+            column_name = ''
+            while column_name == '':
+                al.voice('Which column do you want to plot?')
+                column_name = click.prompt('Which column do you want to plot?', type=str)
+                click.echo('DEBUG: %s' % column_name)
+            plt.figure()
+            plt.plot(dataset[column_name].values)
+            plt.title(column_name)
+            plt.show(block=False)
+        else:
+            for column_name in parameters["columns"]:
+                plt.figure()
+                plt.plot(dataset[column_name].values)
+                plt.title(column_name)
+                plt.show(block=False)
 
-    plt.figure()
-    plt.plot(dataset[column_name])
-    plt.title(column_name)
-    plt.show(block=False)
+    else:
+        plt.figure()
+        plt.plot(dataset.values)
+        plt.title(parameters["Dataset"])
+        plt.show(block=False)
 
 
-def execute_plot(current_dataset):
+def execute_plot(current_dataset, parameters):
     """
-    Execute the function plot
-    :param current_dataset: the current dataset
+    Execute the function plot.
+    :param current_dataset: The current dataset.
+    :param parameters: The parameters for the graphic (dataset name, intervals,...).
     :return:
     """
-    plot_dataset(current_dataset)
+    data_name = parameters["Dataset"]
+    if data_name == '' or data_name == 'current_dataset':
+        plot_dataset(current_dataset, parameters)
+    else:
+        dataset = al.Workspace().get_dataset(data_name)
+        plot_dataset(dataset, parameters)

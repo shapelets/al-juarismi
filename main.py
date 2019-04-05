@@ -19,35 +19,7 @@ import aljuarismi as al
 project_id = 'aljuaritmo'
 session_id = al.id_session_creator()
 language_code = 'en'
-dataset_paths = {}
 current_dataset = None
-
-# Container for loaded datasets
-loaded_datasets = {}
-
-
-def save_dictionary():
-    """
-    Saves in a file the dataset file names and paths we had loaded in the previous or actual session
-    :return:
-    """
-    f = open("./resources/DictionaryDataset.txt", "w+")
-    for key, val in dataset_paths.items():
-        f.write(key + ',' + val + '\n')
-    f.close()
-
-
-def load_dictionary():
-    """
-    Load the file which contains the names and paths of the datasets that had been loaded in previous sessions
-    :return:
-    """
-    f = open("./resources/DictionaryDataset.txt", "r")
-    global dataset_paths
-    for line in f:
-        fields = line.split(",")
-        dataset_paths[fields[0]] = fields[1].rstrip()
-    f.close()
 
 
 def detect_intent_text(project_id, session_id, text, language_code):
@@ -85,37 +57,39 @@ def detect_intent_text(project_id, session_id, text, language_code):
     print('DEBUG: Detected intent: {} (confidence: {})\n'.format(
         response.query_result.intent.display_name,
         response.query_result.intent_detection_confidence))
+
     global current_dataset
 
     if response.query_result.intent.display_name == 'RandomDataset':
-        current_dataset = al.createDataset(parameters, loaded_datasets)
+        current_dataset = al.create_dataset(parameters)
 
     elif response.query_result.intent.display_name == 'LoadDataset':
-        current_dataset = al.execute_load_dataset(parameters, loaded_datasets, dataset_paths)
+        current_dataset = al.load_dataset(parameters)
 
     elif response.query_result.intent.display_name == 'ShowResult':
-        al.execute_plot(current_dataset)
+        al.execute_plot(current_dataset, parameters)
 
     elif response.query_result.intent.display_name == 'PrintResult':
-        pass
+        al.execute_print(current_dataset, parameters)
+
+    elif response.query_result.intent.display_name == 'DoOperations':
+        al.do_op(parameters, current_dataset)
+
+    elif response.query_result.intent.display_name == 'DoClustering':
+        al.do_clustering(parameters, current_dataset)
 
     elif response.query_result.intent.display_name == 'Exit - yes':
-        exit()
+        al.exiting_yes(response.query_result.fulfillment_text)
 
     elif response.query_result.intent.display_name == 'Exit - no':
-        exit()
+        al.exiting_no(response.query_result.fulfillment_text)
 
     print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
+    if response.query_result.fulfillment_text:
+        al.voice(response.query_result.fulfillment_text)
 
 
 def main(*args, **kwargs):
-
-    try:
-        load_dictionary()
-    except IOError:
-        pass
-    finally:
-        pass
     try:
         print("Welcome, I'm Aljuarismo, what can I do for you?")
         while True:
