@@ -40,8 +40,8 @@ def do_clustering(parameters, dataset):
     data_name = parameters["Dataset"]
     if data_name:
         dataset = workspace.get_dataset(data_name)
-    if dataset is None:
-        return
+        if dataset is None:
+            return
 
     if op == "kmeans":
         (centroids, labels) = al.kmean(dataset.values, parameters)

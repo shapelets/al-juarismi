@@ -60,6 +60,6 @@ def execute_plot(dataset, parameters):
     data_name = parameters["Dataset"]
     if data_name:
         dataset = workspace.get_dataset(data_name)
-    if dataset is None:
-        return
+        if dataset is None:
+            return
     plot_dataset(dataset, parameters)

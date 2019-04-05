@@ -27,7 +27,7 @@ def check_current_dataset(dataset):
     """
     Check if the current dataset exists or not.
     :param dataset: The current dataset.
-    :return: If the dataset exists
+    :return: If the dataset exists.
     """
     workspace = wm.Workspace()
     if dataset is None:
@@ -41,7 +41,7 @@ def check_current_dataset(dataset):
 
 def voice(txt):
     """
-    Does the voice of the assistant.
+    Reproduces the message passed.
     :param txt: The text which will be read.
     :return:
     """

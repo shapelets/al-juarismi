@@ -125,7 +125,7 @@ class Workspace:
 
     def has_any_dataset(self):
         """
-        Sees if the database of datasets has any dataset saved
-        :return:
+        Sees if the database of datasets has any dataset saved.
+        :return: Boolean.
         """
         return self.__datasets.totalkeys() > 0
