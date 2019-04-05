@@ -49,16 +49,17 @@ def plot_dataset(dataset, parameters):
         plt.show(block=False)
 
 
-def execute_plot(current_dataset, parameters):
+def execute_plot(dataset, parameters):
     """
     Execute the function plot.
-    :param current_dataset: The current dataset.
+    :param dataset: The current dataset.
     :param parameters: The parameters for the graphic (dataset name, intervals,...).
     :return:
     """
+    workspace = al.Workspace()
     data_name = parameters["Dataset"]
-    if data_name == '' or data_name == 'current_dataset':
-        plot_dataset(current_dataset, parameters)
-    else:
-        dataset = al.Workspace().get_dataset(data_name)
-        plot_dataset(dataset, parameters)
+    if data_name:
+        dataset = workspace.get_dataset(data_name)
+        if dataset is None:
+            return
+    plot_dataset(dataset, parameters)

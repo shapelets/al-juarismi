@@ -36,8 +36,12 @@ def do_clustering(parameters, dataset):
     :return:
     """
     op = parameters.pop("operation")
-    if parameters["Dataset"]:
-        dataset = al.Workspace().get_dataset(parameters["Dataset"])
+    workspace = al.Workspace()
+    data_name = parameters["Dataset"]
+    if data_name:
+        dataset = workspace.get_dataset(data_name)
+        if dataset is None:
+            return
 
     if op == "kmeans":
         (centroids, labels) = al.kmean(dataset.values, parameters)
