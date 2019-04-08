@@ -75,6 +75,10 @@ def detect_intent_text(project_id, session_id, text, language_code):
         al.exiting_no(response.query_result.fulfillment_text)
 
     elif not re.search("^Default|Exit", response.query_result.intent.display_name):
+
+        if parameters['Dataset'] == '':
+            parameters['Dataset'] = 'current'
+
         if al.check_dataset(parameters):
 
             if response.query_result.intent.display_name == 'ShowResult':
@@ -89,9 +93,18 @@ def detect_intent_text(project_id, session_id, text, language_code):
             elif response.query_result.intent.display_name == 'DoClustering':
                 al.do_clustering(parameters)
 
-    print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
-    if response.query_result.fulfillment_text:
-        al.voice(response.query_result.fulfillment_text)
+            print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
+            if response.query_result.fulfillment_text:
+                al.voice(response.query_result.fulfillment_text)
+        else:
+            if parameters["Dataset"] != 'current':
+                print("The object " + parameters["Dataset"] + " does not exist.")
+                al.voice("The object " + parameters["Dataset"] + " does not exist.")
+            else:
+                print("There is no loaded dataset.")
+                al.voice("There is no loaded dataset.")
+            print("Please, load a dataset or use a previously stored one before using any function.")
+            al.voice("Please, load a dataset or use a previously stored one before using any function.")
 
 
 def main(*args, **kwargs):

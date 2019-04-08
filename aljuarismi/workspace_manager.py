@@ -68,7 +68,6 @@ class Workspace:
         if data:
             return pd.read_json(self.__datasets.get(name))
         else:
-            print('The dataset or object you want to obtain does not exist in the workspace')
             return None
 
     def remove_dataset(self, name):

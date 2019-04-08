@@ -31,13 +31,9 @@ def check_dataset(parameters):
     """
     workspace = wm.Workspace()
     dataset_name = parameters['Dataset']
-    check = workspace.get_dataset('current') is not None or (dataset_name in list(workspace.get_all_dataset()))
-    if not check:
-        if workspace.has_any_dataset():
-            print("Please, load a database before using any function or use a saved one in the workspace")
-        else:
-            print("Please, load a database before using any workspace")
-    return check
+    check = workspace.get_dataset(dataset_name)
+
+    return check is not None
 
 
 def voice(txt):
