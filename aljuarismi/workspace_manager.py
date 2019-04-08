@@ -30,6 +30,13 @@ class Workspace:
         self.__counters = pdb.load(counters_path, True)
         self.__dataset_locator = pdb.load(dataset_locator_path, True)
 
+    def init_current(self):
+        """
+        Initialize the current dataset
+        :return:
+        """
+        self.__datasets.set('current', None)
+
     def clean_workspace(self):
         """
         Delete all databases.
@@ -125,7 +132,7 @@ class Workspace:
 
     def has_any_dataset(self):
         """
-        Sees if the database of datasets has any dataset saved.
+        Sees if the database of datasets has any dataset saved, except of the current.
         :return: Boolean.
         """
-        return self.__datasets.totalkeys() > 0
+        return self.__datasets.totalkeys() > 1

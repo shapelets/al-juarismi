@@ -42,12 +42,13 @@ def load_dataset(parameters):
     :return: The loaded dataset.
     """""
     dataset_name = parameters['Dataset']
+    workspace = al.Workspace()
 
-    if dataset_name in al.Workspace().get_all_dataset():
-        data = al.Workspace().get_dataset(dataset_name)
+    if dataset_name in workspace.get_all_dataset():
+        data = workspace.get_dataset(dataset_name)
     else:
-        if dataset_name in al.Workspace().get_all_dataset_paths():
-            path = al.Workspace().get_dataset_path(dataset_name)
+        if dataset_name in workspace.get_all_dataset_paths():
+            path = workspace.get_dataset_path(dataset_name)
         else:
             path = ask_for_dataset_path()
 
@@ -56,8 +57,8 @@ def load_dataset(parameters):
             print("Please introduce a valid one")
             path = ask_for_dataset_path()
         data = pd.read_csv(path + '/' + dataset_name + '.csv')
-        al.Workspace().save_dataset(dataset_name, data, path)
-    return data
+        workspace.save_dataset(dataset_name, data, path)
+    workspace.save_dataset('current', data)
 
 
 def create_dataset(parameters):
@@ -66,6 +67,8 @@ def create_dataset(parameters):
     :param parameters: The parameters for the creation (number of rows, numbers of columns,...).
     :return: A random dataset.
     """
+    workspace = al.Workspace()
+
     print('Creating the random dataset')
     al.voice('Creating the random dataset')
     num_rows, num_col, values = 50, 1, [0, 100]
@@ -83,8 +86,8 @@ def create_dataset(parameters):
         for n in range(num_col):
             tt['col' + str(n)] = pd.DataFrame(np.random.random_integers(values[0], values[1], num_rows),
                                               dtype='float32')
-    rand = al.Workspace().get_counter('rand')
-    al.Workspace().save_dataset('random' + str(rand), tt)
+    rand = workspace.get_counter('rand')
+    workspace.save_dataset('random' + str(rand), tt)
+    workspace.save_dataset('current', tt)
     print("Created and saved as random" + str(rand))
     al.voice("Created and saved as random" + str(rand))
-    return tt
