@@ -27,6 +27,7 @@ def check_current_dataset(dataset, parameters):
     """
     Check if the current dataset exists or not.
     :param dataset: The current dataset.
+    :param parameters: The parameters for this function (name of the Dataset)
     :return: If the dataset exists.
     """
     workspace = wm.Workspace()
