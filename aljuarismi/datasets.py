@@ -68,10 +68,10 @@ def create_dataset(parameters):
     """
     print('Creating the random dataset')
     al.voice('Creating the random dataset')
+    num_rows, num_col, values = 50, 1, [0, 100]
     if list(filter(lambda x: x != '' or [], list(parameters.values()))) == [[]]:
         tt = pd.DataFrame([rng.randrange(1, 100) for n in range(50)])
     else:
-        num_rows, num_col, values = 50, 1, [0, 100]
         if parameters["columns"]:
             num_col = int(parameters["columns"])
         if parameters["rows"]:
