@@ -67,6 +67,10 @@ def detect_intent_text(project_id, session_id, text, language_code):
     elif response.query_result.intent.display_name == 'LoadDataset':
         current_dataset = al.load_dataset(parameters)
 
+    elif response.query_result.intent.display_name == 'ShowWorkspace':
+        workspace = al.Workspace()
+        print(list(workspace.get_all_dataset()))
+
     elif response.query_result.intent.display_name == 'Exit - yes':
         al.exiting_yes(response.query_result.fulfillment_text)
 
@@ -74,7 +78,7 @@ def detect_intent_text(project_id, session_id, text, language_code):
         al.exiting_no(response.query_result.fulfillment_text)
 
     elif not re.search("^Default|Exit", response.query_result.intent.display_name):
-        if al.check_current_dataset(current_dataset):
+        if al.check_current_dataset(current_dataset, parameters):
 
             if response.query_result.intent.display_name == 'ShowResult':
                 al.execute_plot(current_dataset, parameters)

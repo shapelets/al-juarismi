@@ -23,15 +23,18 @@ def id_session_creator():
     return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
 
 
-def check_current_dataset(dataset):
+def check_current_dataset(dataset, parameters):
     """
     Check if the current dataset exists or not.
     :param dataset: The current dataset.
     :return: If the dataset exists.
     """
     workspace = wm.Workspace()
+    data = parameters['Dataset']
     if dataset is None:
         if workspace.has_any_dataset():
+            if data in list(workspace.get_all_dataset()):
+                return True
             print("Please, load a database before using any function or use a saved one in the database")
         else:
             print("Please, load a database before using any function")
