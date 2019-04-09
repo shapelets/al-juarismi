@@ -8,9 +8,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import os
-import random as rng
 
-import click
 import numpy as np
 import pandas as pd
 
@@ -25,9 +23,7 @@ def ask_for_dataset_path():
     print('Where is it located?')
     al.voice('Where is it located?')
     print('Actual path is ' + os.getcwd())
-    query = ''
-    while query == '':
-        query = click.prompt('')
+    query = al.query_input()
     if query == 'here':
         path = os.getcwd()
     else:
@@ -68,25 +64,74 @@ def create_dataset(parameters):
     """
     workspace = al.Workspace()
 
+    num_rows, num_col, values = rand_param(parameters)
+
     print('Creating the random dataset')
     al.voice('Creating the random dataset')
-    num_rows, num_col, values = 50, 1, [0, 100]
-    if list(filter(lambda x: x != '' or [], list(parameters.values()))) == [[]]:
-        tt = pd.DataFrame([rng.randrange(1, 100) for n in range(50)])
-    else:
-        if parameters["columns"]:
-            num_col = int(parameters["columns"])
-        if parameters["rows"]:
-            num_rows = int(parameters["rows"])
-        if parameters["values"]:
-            values = parameters["values"]
 
-        tt = pd.DataFrame(index=range(num_rows))
-        for n in range(num_col):
-            tt['col' + str(n)] = pd.DataFrame(np.random.random_integers(values[0], values[1], num_rows),
-                                              dtype='float32')
+    tt = pd.DataFrame(index=range(num_rows))
+    for n in range(num_col):
+        tt['col' + str(n)] = pd.DataFrame(np.random.uniform(values[0], values[1], size=num_rows),
+                                          dtype='float32')
+
     rand = workspace.get_counter('rand')
     workspace.save_dataset('random' + str(rand), tt)
     workspace.save_dataset('current', tt)
-    print("Created and saved as random" + str(rand))
-    al.voice("Created and saved as random" + str(rand))
+    print('Created and saved as random{} which has {} columns, {} rows and values '
+          'between {} and {}'.format(str(rand), num_col, num_rows, values[0], values[1]))
+    al.voice('Created and saved as random{} which has {} columns, {} rows and values '
+             'between {} and {}'.format(str(rand), num_col, num_rows, values[0], values[1]))
+
+
+def rand_param(parameters):
+    """
+    Obtains the parameters for the random dataset generator.
+    :param parameters: The parameters for the creation (number of rows, numbers of columns,...).
+    :return: A tuple of the parameters.
+    """
+    num_rows, num_col, values = 0, 0, []
+    if parameters["columns"]:
+        num_col = int(parameters["columns"])
+    else:
+        print('How many columns?')
+        al.voice('How many columns?')
+        query = al.query_input()
+        while not query.isnumeric():
+            print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            query = al.query_input()
+        num_col = int(query)
+
+    if parameters["rows"]:
+        num_rows = int(parameters["rows"])
+    else:
+        print('How many rows?')
+        al.voice('How many rows?')
+        query = al.query_input()
+        while not query.isnumeric():
+            print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            query = al.query_input()
+        num_rows = int(query)
+
+    if parameters["values"]:
+        values = parameters["values"]
+    else:
+        print('What is the minimum value?')
+        al.voice('What is the minimum value?')
+        query = al.query_input()
+        while not al.isnumber(query):
+            print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            query = al.query_input()
+        values.append(float(query))
+        print('And the maximum?')
+        al.voice('And the maximum?')
+        query = al.query_input()
+        while not al.isnumber(query):
+            print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            query = al.query_input()
+        values.append(float(query))
+
+    return num_rows, num_col, values

@@ -10,6 +10,7 @@
 import random
 import string
 
+import click
 import pyttsx3 as tts
 
 import aljuarismi.workspace_manager as wm
@@ -23,6 +24,13 @@ def id_session_creator():
     return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
 
 
+def query_input():
+    query = ''
+    while query == '':
+        query = click.prompt('')
+    return query
+
+
 def check_dataset(parameters):
     """
     Check if the current dataset or, it is passed the name, a dataset exists or not.
@@ -34,6 +42,19 @@ def check_dataset(parameters):
     check = workspace.get_dataset(dataset_name)
 
     return check is not None
+
+
+def isnumber(value):
+    """
+    Checks if it is a number the input.
+    :param value: The number in string.
+    :return: A boolean.
+    """
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
 
 
 def voice(txt):

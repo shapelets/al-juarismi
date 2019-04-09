@@ -51,6 +51,7 @@ class DatasetTests(unittest.TestCase):
 
         self.workspace = al.Workspace()
         self.workspace.save_dataset_path('titanic', '../../datasets')
+        self.workspace.init_current()
 
     @ignore_warnings
     def test_load_dataset(self):
@@ -62,65 +63,28 @@ class DatasetTests(unittest.TestCase):
         self.assertEqual(data['queryResult']['intentDetectionConfidence'], 1.0)
         self.assertEqual(data['queryResult']['parameters']['Dataset'], 'titanic')
 
-        dataset = al.load_dataset(data['queryResult']['parameters'])
+        al.load_dataset(data['queryResult']['parameters'])
+        self.workspace = al.Workspace()
+        dataset = self.workspace.get_dataset('current')
         titanic = pd.read_csv("../../datasets/titanic.csv")
         self.assertEqual(dataset.to_json(), titanic.to_json())
 
     @ignore_warnings
-    def test_create_random_not_param(self):
-        order = "Create random dataset"
-
-        data = response(self, order)
-
-        self.assertEqual(data['queryResult']['intent']['displayName'], 'RandomDataset')
-        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.9)
-        random = al.create_dataset(data['queryResult']['parameters'])
-        self.assertEqual(random.size, 50)
-        self.assertGreaterEqual(random.values.min(), 0)
-        self.assertLessEqual(random.values.max(), 100)
-
-    @ignore_warnings
-    def test_create_random_num_columns(self):
-        order = " create random dataset for 5 columns"
+    def test_create_random(self):
+        order = "create random dataset for 5 row and 10 columns between -12.1 and 80"
 
         data = response(self, order)
 
         self.assertEqual(data['queryResult']['intent']['displayName'], 'RandomDataset')
         self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
-        random = al.create_dataset(data['queryResult']['parameters'])
-        self.assertEqual(random.shape, (50, int(data['queryResult']['parameters']['columns'])), '(n_row, n_column) do'
-                                                                                                ' not match')
-        self.assertGreaterEqual(random.values.min(), 0)
-        self.assertLessEqual(random.values.max(), 100)
-
-    @ignore_warnings
-    def test_create_random_num_rows(self):
-        order = " create random dataset for 5 rows"
-
-        data = response(self, order)
-
-        self.assertEqual(data['queryResult']['intent']['displayName'], 'RandomDataset')
-        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
-        random = al.create_dataset(data['queryResult']['parameters'])
-        self.assertEqual(random.shape, (int(data['queryResult']['parameters']['rows']), 1), '(n_row, n_column) do'
-                                                                                            ' not match')
-        self.assertGreaterEqual(random.values.min(), 0)
-        self.assertLessEqual(random.values.max(), 100)
-
-    @ignore_warnings
-    def test_create_random_num_rows_and_columns(self):
-        order = "create random dataset for 5 row and 10 columns"
-
-        data = response(self, order)
-
-        self.assertEqual(data['queryResult']['intent']['displayName'], 'RandomDataset')
-        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
-        random = al.create_dataset(data['queryResult']['parameters'])
+        al.create_dataset(data['queryResult']['parameters'])
+        self.workspace = al.Workspace()
+        random = self.workspace.get_dataset('current')
         self.assertEqual(random.shape, (int(data['queryResult']['parameters']['rows']),
                                         int(data['queryResult']['parameters']['columns'])),
                          '(n_row, n_column) do not match')
-        self.assertGreaterEqual(random.values.min(), 0)
-        self.assertLessEqual(random.values.max(), 100)
+        self.assertGreaterEqual(random.values.min(), float(data['queryResult']['parameters']['values'][0]))
+        self.assertLessEqual(random.values.max(), float(data['queryResult']['parameters']['values'][1]))
 
     @ignore_warnings
     def tearDown(self):
