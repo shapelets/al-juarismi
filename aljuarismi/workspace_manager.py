@@ -30,6 +30,13 @@ class Workspace:
         self.__counters = pdb.load(counters_path, True)
         self.__dataset_locator = pdb.load(dataset_locator_path, True)
 
+    def init_current(self):
+        """
+        Initialize the current dataset
+        :return:
+        """
+        self.__datasets.set('current', None)
+
     def clean_workspace(self):
         """
         Delete all databases.
@@ -59,9 +66,8 @@ class Workspace:
 
         data = self.__datasets.get(name)
         if data:
-            return pd.read_json(self.__datasets.get(name))
+            return pd.read_json(data)
         else:
-            print('The dataset or object you want to obtain does not exist in the workspace')
             return None
 
     def remove_dataset(self, name):
@@ -93,7 +99,11 @@ class Workspace:
         :param name: The name of the dataset.
         :return: The path of a dataset.
         """
-        return self.__dataset_locator.get(name)
+        path = self.__dataset_locator.get(name)
+        if path:
+            return path
+        else:
+            return None
 
     def get_all_dataset_paths(self):
         """
@@ -125,7 +135,7 @@ class Workspace:
 
     def has_any_dataset(self):
         """
-        Sees if the database of datasets has any dataset saved.
+        Sees if the database of datasets has any dataset saved, except of the current.
         :return: Boolean.
         """
-        return self.__datasets.totalkeys() > 0
+        return self.__datasets.totalkeys() > 1

@@ -10,14 +10,14 @@
 import aljuarismi as al
 
 
-def execute_print(dataset, parameters):
+def execute_print(parameters):
     """
     Execute the print function.
-    :param dataset: The current dataset.
     :param parameters: The parameter for the print (Dataset name, ...).
     :return:
     """
     workspace = al.Workspace()
+    dataset = workspace.get_dataset('current')
     data_name = parameters["Dataset"]
     if data_name:
         dataset = workspace.get_dataset(data_name)

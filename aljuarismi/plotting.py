@@ -27,10 +27,14 @@ def plot_dataset(dataset, parameters):
             al.voice("I have more than one column available, which is the one to be selected?")
             print(list(dataset.columns.values))
             column_name = ''
-            while column_name == '':
+            while column_name not in list(dataset.columns.values):
                 al.voice('Which column do you want to plot?')
                 column_name = click.prompt('Which column do you want to plot?', type=str)
                 click.echo('DEBUG: %s' % column_name)
+                if column_name not in list(dataset.columns.values):
+                    print('Incorrect column')
+                    al.voice('Incorrect column')
+
             plt.figure()
             plt.plot(dataset[column_name].values)
             plt.title(column_name)
@@ -49,14 +53,14 @@ def plot_dataset(dataset, parameters):
         plt.show(block=False)
 
 
-def execute_plot(dataset, parameters):
+def execute_plot(parameters):
     """
     Execute the function plot.
-    :param dataset: The current dataset.
     :param parameters: The parameters for the graphic (dataset name, intervals,...).
     :return:
     """
     workspace = al.Workspace()
+    dataset = workspace.get_dataset('current')
     data_name = parameters["Dataset"]
     if data_name:
         dataset = workspace.get_dataset(data_name)

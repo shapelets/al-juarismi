@@ -20,7 +20,6 @@ import aljuarismi as al
 project_id = 'aljuaritmo'
 session_id = al.id_session_creator()
 language_code = 'en'
-current_dataset = None
 
 
 def detect_intent_text(project_id, session_id, text, language_code):
@@ -59,13 +58,15 @@ def detect_intent_text(project_id, session_id, text, language_code):
         response.query_result.intent.display_name,
         response.query_result.intent_detection_confidence))
 
-    global current_dataset
-
     if response.query_result.intent.display_name == 'RandomDataset':
-        current_dataset = al.create_dataset(parameters)
+        al.create_dataset(parameters)
 
     elif response.query_result.intent.display_name == 'LoadDataset':
-        current_dataset = al.load_dataset(parameters)
+        al.load_dataset(parameters)
+
+    elif response.query_result.intent.display_name == 'ShowWorkspace':
+        workspace = al.Workspace()
+        print(list(workspace.get_all_dataset()))
 
     elif response.query_result.intent.display_name == 'Exit - yes':
         al.exiting_yes(response.query_result.fulfillment_text)
@@ -74,27 +75,41 @@ def detect_intent_text(project_id, session_id, text, language_code):
         al.exiting_no(response.query_result.fulfillment_text)
 
     elif not re.search("^Default|Exit", response.query_result.intent.display_name):
-        if al.check_current_dataset(current_dataset):
+
+        if parameters['Dataset'] == '':
+            parameters['Dataset'] = 'current'
+
+        if al.check_dataset(parameters):
 
             if response.query_result.intent.display_name == 'ShowResult':
-                al.execute_plot(current_dataset, parameters)
+                al.execute_plot(parameters)
 
             elif response.query_result.intent.display_name == 'PrintResult':
-                al.execute_print(current_dataset, parameters)
+                al.execute_print(parameters)
 
             elif response.query_result.intent.display_name == 'DoOperations':
-                al.do_op(parameters, current_dataset)
+                al.do_op(parameters)
 
             elif response.query_result.intent.display_name == 'DoClustering':
-                al.do_clustering(parameters, current_dataset)
+                al.do_clustering(parameters)
 
-    print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
-    if response.query_result.fulfillment_text:
-        al.voice(response.query_result.fulfillment_text)
+            print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
+            if response.query_result.fulfillment_text:
+                al.voice(response.query_result.fulfillment_text)
+        else:
+            if parameters["Dataset"] != 'current':
+                print("The object " + parameters["Dataset"] + " does not exist.")
+                al.voice("The object " + parameters["Dataset"] + " does not exist.")
+            else:
+                print("There is no loaded dataset.")
+                al.voice("There is no loaded dataset.")
+            print("Please, load a dataset or use a previously stored one before using any function.")
+            al.voice("Please, load a dataset or use a previously stored one before using any function.")
 
 
 def main(*args, **kwargs):
     try:
+        al.Workspace().init_current()
         print("Welcome, I'm Aljuarismo, what can I do for you?")
         while True:
             query = click.prompt('')

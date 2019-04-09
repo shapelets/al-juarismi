@@ -23,20 +23,17 @@ def id_session_creator():
     return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
 
 
-def check_current_dataset(dataset):
+def check_dataset(parameters):
     """
-    Check if the current dataset exists or not.
-    :param dataset: The current dataset.
+    Check if the current dataset or, it is passed the name, a dataset exists or not.
+    :param parameters: The parameters for this function (name of the Dataset)
     :return: If the dataset exists.
     """
     workspace = wm.Workspace()
-    if dataset is None:
-        if workspace.has_any_dataset():
-            print("Please, load a database before using any function or use a saved one in the database")
-        else:
-            print("Please, load a database before using any function")
-        return False
-    return True
+    dataset_name = parameters['Dataset']
+    check = workspace.get_dataset(dataset_name)
+
+    return check is not None
 
 
 def voice(txt):

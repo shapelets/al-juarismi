@@ -72,9 +72,9 @@ class ClusteringTests(unittest.TestCase):
                                    [1.5, -1.5, 0.8333, -0.8333],
                                    [4.8333, 3.6667, 2.6667, 1.6667]])
 
-        kmean = al.kmean(tts, data['queryResult']['parameters'])
+        (centroid, labels) = al.kmean(tts, data['queryResult']['parameters'])
 
-        self.assertEqual(expected_c.values.all(), kmean.values.all())
+        self.assertEqual(expected_c.values.all(), centroid.values.all())
 
     @ignore_warnings
     def test_kmeans_dataset(self):
@@ -100,9 +100,9 @@ class ClusteringTests(unittest.TestCase):
                                    [1.5, -1.5, 0.8333, -0.8333],
                                    [4.8333, 3.6667, 2.6667, 1.6667]])
 
-        kmean = al.kmean(tts, data['queryResult']['parameters'])
+        (centroid, labels) = al.kmean(tts, data['queryResult']['parameters'])
 
-        self.assertEqual(expected_c.values.all(), kmean.values.all())
+        self.assertEqual(expected_c.values.all(), centroid.values.all())
 
     @ignore_warnings
     def test_kshape(self):
@@ -124,9 +124,9 @@ class ClusteringTests(unittest.TestCase):
                                    [-0.7825, 1.5990, 0.1701, 0.4082, 0.8845, -1.4969, -0.7825],
                                    [-0.6278, 1.3812, -2.0090, 0.5022, 0.6278, 0.0000, 0.1256]])
 
-        kshape = al.kmean(tts, data['queryResult']['parameters'])
+        (centroid, labels) = al.kmean(tts, data['queryResult']['parameters'])
 
-        self.assertEqual(expected_c.values.all(), kshape.values.all())
+        self.assertEqual(expected_c.values.all(), centroid.values.all())
 
     @ignore_warnings
     def test_shape_dataset(self):
@@ -151,9 +151,9 @@ class ClusteringTests(unittest.TestCase):
                                    [-0.7825, 1.5990, 0.1701, 0.4082, 0.8845, -1.4969, -0.7825],
                                    [-0.6278, 1.3812, -2.0090, 0.5022, 0.6278, 0.0000, 0.1256]])
 
-        kshape = al.kmean(tts, data['queryResult']['parameters'])
+        (centroid, labels) = al.kmean(tts, data['queryResult']['parameters'])
 
-        self.assertEqual(expected_c.values.all(), kshape.values.all())
+        self.assertEqual(expected_c.values.all(), centroid.values.all())
 
     @ignore_warnings
     def tearDown(self):
