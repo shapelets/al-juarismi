@@ -44,12 +44,10 @@ def load_dataset(parameters):
     dataset_name = parameters['Dataset']
     workspace = al.Workspace()
 
-    if dataset_name in workspace.get_all_dataset():
-        data = workspace.get_dataset(dataset_name)
-    else:
-        if dataset_name in workspace.get_all_dataset_paths():
-            path = workspace.get_dataset_path(dataset_name)
-        else:
+    data = workspace.get_dataset(dataset_name)
+    if data is None:
+        path = workspace.get_dataset_path(dataset_name)
+        if path is None:
             path = ask_for_dataset_path()
 
         while not os.path.exists(path + '/' + dataset_name + '.csv'):
@@ -58,6 +56,7 @@ def load_dataset(parameters):
             path = ask_for_dataset_path()
         data = pd.read_csv(path + '/' + dataset_name + '.csv')
         workspace.save_dataset(dataset_name, data, path)
+
     workspace.save_dataset('current', data)
 
 

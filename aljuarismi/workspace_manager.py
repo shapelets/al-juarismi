@@ -66,7 +66,7 @@ class Workspace:
 
         data = self.__datasets.get(name)
         if data:
-            return pd.read_json(self.__datasets.get(name))
+            return pd.read_json(data)
         else:
             return None
 
@@ -99,7 +99,11 @@ class Workspace:
         :param name: The name of the dataset.
         :return: The path of a dataset.
         """
-        return self.__dataset_locator.get(name)
+        path = self.__dataset_locator.get(name)
+        if path:
+            return path
+        else:
+            return None
 
     def get_all_dataset_paths(self):
         """
