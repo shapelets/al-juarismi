@@ -66,7 +66,7 @@ class Workspace:
 
         data = self.__datasets.get(name)
         if data:
-            return pd.read_json(data)
+            return pd.read_json(data).sort_index()
         else:
             return None
 
