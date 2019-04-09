@@ -22,7 +22,7 @@ def ask_for_dataset_path():
     """
     print('Where is it located?')
     al.voice('Where is it located?')
-    print('Actual path is ' + os.getcwd())
+    print('Current path is ' + os.getcwd())
     query = al.query_input()
     if query == 'here':
         path = os.getcwd()
