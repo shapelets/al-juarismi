@@ -24,6 +24,26 @@ def id_session_creator():
     return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
 
 
+def obtain_column(dataset):
+    """
+    Obtains the column to use.
+    :param dataset: The dataset that have more than two columns.
+    :return: The name of the column selected.
+    """
+    print("I have more than one column available:")
+    print(list(dataset.columns.values))
+    voice("I have more than one column available:")
+    column_name = ''
+    while column_name not in list(dataset.columns.values):
+        column_name = click.prompt('Which is the one to be selected?', type=str)
+        voice('Which is the one to be selected?')
+        click.echo('DEBUG: %s' % column_name)
+        if column_name not in list(dataset.columns.values):
+            print('Incorrect column')
+            voice('Incorrect column')
+    return column_name
+
+
 def query_input():
     query = ''
     while query == '':

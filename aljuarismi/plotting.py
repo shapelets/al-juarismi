@@ -7,7 +7,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import click
 import matplotlib.pyplot as plt
 
 import aljuarismi as al
@@ -21,20 +20,9 @@ def plot_dataset(dataset, parameters):
     :return:
     """
     ncol = dataset.columns.size
-    if ncol - 1 > 1:
+    if ncol > 1:
         if not parameters["columns"]:
-            print("I have more than one column available, which is the one to be selected?")
-            al.voice("I have more than one column available, which is the one to be selected?")
-            print(list(dataset.columns.values))
-            column_name = ''
-            while column_name not in list(dataset.columns.values):
-                al.voice('Which column do you want to plot?')
-                column_name = click.prompt('Which column do you want to plot?', type=str)
-                click.echo('DEBUG: %s' % column_name)
-                if column_name not in list(dataset.columns.values):
-                    print('Incorrect column')
-                    al.voice('Incorrect column')
-
+            column_name = al.obtain_column(dataset)
             plt.figure()
             plt.plot(dataset[column_name].values)
             plt.title(column_name)
@@ -60,10 +48,6 @@ def execute_plot(parameters):
     :return:
     """
     workspace = al.Workspace()
-    dataset = workspace.get_dataset('current')
     data_name = parameters["Dataset"]
-    if data_name:
-        dataset = workspace.get_dataset(data_name)
-        if dataset is None:
-            return
+    dataset = workspace.get_dataset(data_name)
     plot_dataset(dataset, parameters)

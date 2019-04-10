@@ -124,6 +124,17 @@ class Workspace:
         self.__counters.set(name, num + 1)
         return num
 
+    def get_last_number_counter(self, name):
+        """
+        Obtains the last number generated of a counter.
+        :param name: The name of the counter.
+        :return: The last number generated of the counter.
+        """
+        num = self.__counters.get(name) - 1
+        if not num:
+            num = 0
+        return num
+
     def save_dataset_path(self, dataset_name, dataset_path):
         """
         Saves only the path where the dataset is located.
