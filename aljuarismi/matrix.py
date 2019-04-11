@@ -13,26 +13,31 @@ import khiva as kv
 import pandas as pd
 
 
-def find_best_n_discords(mt, parameters, m=None):
+def find_best_n_discords(mt, m, parameters, dataset):
     """
     Execute the operation 'find best n discords' of Khiva.
     :param mt: The matrix profile and the index calculated previously.
     :param m: Subsequence length value used to calculate the matrix profile.
     :param parameters: The parameters of the function (number of clusters, ...).
-    :return: Tuple with the discord distances, the discord indices and the subsequence indices.
+    :return: Dataframe with the discord distances, the discord indices and the subsequence indices.
     """
-    (prof, ind) = mt
-
+    prof = kv.Array(mt.get("profile").to_list(), khiva_type=kv.dtype.f32)
+    ind = kv.Array(mt.get("index").to_list(), khiva_type=kv.dtype.u32)
     n = parameters["n"]
     if not n:
         print('How many discords?')
         while not n:
             n = click.prompt('', type=int)
-    data = kv.find_best_n_discords(prof, ind, m, n)
-    return data[0].to_pandas(), data[1].to_pandas(), data[2].to_pandas()
+    n = int(n)
+    distance, index, subsequence = kv.find_best_n_discords(prof, ind, m, n)
+    stm = pd.DataFrame(index=range(m))
+    sub = subsequence.to_list()
+    for it in range(n):
+        stm["col" + it] = pd.DataFrame(dataset.loc[sub[it]:sub[it] + m, :])
+    return stm
 
 
-def find_best_n_motifs(mt, parameters):
+def find_best_n_motifs(mt, m, parameters, dataset):
     """
     Execute the operation 'find best n motifs' of Khiva.
     :param mt: The matrix profile and the index calculated previously, and the m used.
@@ -40,14 +45,20 @@ def find_best_n_motifs(mt, parameters):
     :param parameters: The parameters of the function (number of clusters, ...).
     :return: Tuple with the motif distances, the motif indices and the subsequence indices.
     """
-    (prof, ind) = mt
+    prof = kv.Array(mt.get("profile").to_list(), khiva_type=kv.dtype.f32)
+    ind = kv.Array(mt.get("index").to_list(), khiva_type=kv.dtype.u32)
     n = parameters["n"]
     if not n:
         print('How many motifs?')
         while not n:
             n = click.prompt('', type=int)
-    data = kv.find_best_n_motifs(prof, ind, m, n)
-    return data[0].to_pandas(), data[1].to_pandas(), data[2].to_pandas()
+    n = int(n)
+    distance, index, subsequence = kv.find_best_n_motifs(prof, ind, m, n)
+    stm = pd.DataFrame(index=range(m))
+    sub = subsequence.to_list()
+    for it in range(n):
+        stm["col" + it] = pd.DataFrame(dataset.loc[sub[it]:sub[it] + m, :])
+    return stm
 
 
 def stomp(tt1, tt2, parameters):
@@ -56,7 +67,7 @@ def stomp(tt1, tt2, parameters):
     :param tt1: First time series.
     :param tt2: Second time series.
     :param parameters: The parameters of the function (subsequence length, ...).
-    :return: Tuple with profile and index.
+    :return: Tuple with a dataframe with profile and index matrix, and the subsequence length (m).
     """
     tts1 = kv.Array(tt1)
     tts2 = kv.Array(tt2)
@@ -65,12 +76,12 @@ def stomp(tt1, tt2, parameters):
         print('What is the length of the subsequence?')
         while not sub_len:
             sub_len = click.prompt('', type=int)
+    sub_len = int(sub_len)
     data = kv.stomp(tts1, tts2, sub_len)
     stm = data[0].to_pandas()
     stm.set_axis(["profile"], axis='columns')
     stm["index"] = data[1].to_pandas()
-    stm["m"] = pd.DataFrame([sub_len])
-    return stm
+    return stm, sub_len
 
 
 def stomp_self_join(tt, parameters):
@@ -78,7 +89,7 @@ def stomp_self_join(tt, parameters):
     Execute the 'stomp' of Khiva for only one time series.
     :param tt: Time series.
     :param parameters: The parameters of the function (subsequence length, ...).
-    :return: Tuple with profile and index
+    :return: Tuple with a dataframe with profile and index matrix, and the subsequence length (m).
     """
     tts = kv.Array(tt)
     sub_len = parameters["m"]
@@ -86,8 +97,8 @@ def stomp_self_join(tt, parameters):
         print('What is the length of the subsequence?')
         while not sub_len:
             sub_len = click.prompt('', type=int)
+    sub_len = int(sub_len)
     data = kv.stomp_self_join(tts, sub_len)
     stm = data[0].to_pandas().join(data[1].to_pandas())
     stm.set_axis(["profile", "index"], axis='columns')
-    stm["m"] = pd.DataFrame([sub_len])
-    return stm
+    return stm, sub_len

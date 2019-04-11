@@ -55,7 +55,10 @@ class Workspace:
         """
         if path:
             self.__dataset_locator.set(name, path)
-        self.__datasets.set(name, dataset.to_json())
+        try:
+            self.__datasets.set(name, dataset.to_json())
+        except AttributeError:
+            self.__datasets.set(name, dataset)
 
     def get_dataset(self, name):
         """
@@ -66,7 +69,10 @@ class Workspace:
 
         data = self.__datasets.get(name)
         if data:
-            return pd.read_json(data).sort_index()
+            try:
+                return pd.read_json(data).sort_index()
+            except Exception:
+                return data
         else:
             return None
 
@@ -131,7 +137,7 @@ class Workspace:
         :return: The last number generated of the counter.
         """
         num = self.__counters.get(name) - 1
-        if not num:
+        if not num or num < 0:
             num = 0
         return num
 

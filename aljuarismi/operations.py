@@ -66,46 +66,57 @@ def do_matrix(parameters):
     """
     op = parameters.pop("operation")
     workspace = al.Workspace()
-    data_name = parameters["Dataset"]
-    data_name2 = parameters["Dataset2"]
-    dataset1 = workspace.get_dataset(data_name)
-    dataset2 = workspace.get_dataset(data_name2)
-
-    if op == "stomp" and data_name2 == '':
-        op = 'stomp_self_join'
 
     if op == "stomp":
+        data_name = parameters["Dataset"]
+        data_name2 = parameters["Dataset2"]
+        dataset1 = workspace.get_dataset(data_name)
+        dataset2 = workspace.get_dataset(data_name2)
+
         if dataset1.columns.size > 1:
             dataset1 = dataset1[al.obtain_column(dataset1)]
         if dataset2.columns.size > 1:
             dataset2 = dataset2[al.obtain_column(dataset2)]
-        stomp = al.stomp(dataset1.values, dataset2.values, parameters)
+        (stomp, m) = al.stomp(dataset1.values, dataset2.values, parameters)
         number = workspace.get_counter('matrix_stomp')
         workspace.save_dataset('stomp' + str(number), stomp)
+        workspace.save_dataset('m_stomp' + str(number), m)
         print("The stomp is stored as stomp" + str(number))
 
     elif op == "stomp_self_join":
+        data_name = parameters["Dataset"]
+        dataset1 = workspace.get_dataset(data_name)
+
         if dataset1.columns.size > 1:
             dataset1 = dataset1[al.obtain_column(dataset1)]
-        stomp = al.stomp_self_join(dataset1.values, parameters)
+        (stomp, m) = al.stomp_self_join(dataset1.values, parameters)
         number = workspace.get_counter('matrix_stomp')
         workspace.save_dataset('stomp' + str(number), stomp)
+        workspace.save_dataset('m_stomp' + str(number), m)
         print("The stomp is stored as stomp" + str(number))
 
     elif op == "find_best_n_discords":
-        n = workspace.get_last_number_counter('stomp')
-        stomp = workspace.get_dataset('stomp' + str(n))
-        (distances, indexes, sub_ind) = al.find_best_n_discords(stomp, parameters)
+        if parameters.get('Dataset'):
+            stomp_name = parameters['Dataset']
+            stomp = workspace.get_dataset(stomp_name)
+            m = workspace.get_dataset('m_' + stomp_name)
+        else:
+            n = workspace.get_last_number_counter('stomp')
+            stomp = workspace.get_dataset('stomp' + str(n))
+            m = workspace.get_dataset('m_stomp' + str(n))
+        discords = al.find_best_n_discords(stomp, m, parameters, workspace.get_dataset(parameters['originalDataset']))
         number = workspace.get_counter('matrix_best_d')
-        workspace.save_dataset('distances' + str(number), distances)
-        workspace.save_dataset('indexes' + str(number), indexes)
-        workspace.save_dataset('subseq_index' + str(number), sub_ind)
+        workspace.save_dataset('discords' + str(number), discords)
 
     elif op == "find_best_n_motifs":
-        n = workspace.get_last_number_counter('stomp')
-        stomp = workspace.get_dataset('stomp' + str(n))
-        (distances, indexes, sub_ind) = al.find_best_n_motifs(stomp, parameters)
+        if parameters.get('Dataset'):
+            stomp_name = parameters['Dataset']
+            stomp = workspace.get_dataset(stomp_name)
+            m = workspace.get_dataset('m_' + stomp_name)
+        else:
+            num = workspace.get_last_number_counter('matrix_stomp')
+            stomp = workspace.get_dataset('stomp' + str(num))
+            m = workspace.get_dataset('m_stomp' + str(num))
+        motifs = al.find_best_n_motifs(stomp, m, parameters, workspace.get_dataset(parameters['originalDataset']))
         number = workspace.get_counter('matrix_best_m')
-        workspace.save_dataset('distances' + str(number), distances)
-        workspace.save_dataset('indexes' + str(number), indexes)
-        workspace.save_dataset('subseq_index' + str(number), sub_ind)
+        workspace.save_dataset('motifs' + str(number), motifs)
