@@ -102,9 +102,6 @@ def detect_intent_text(project_id, session_id, text, language_code):
             elif response.query_result.intent.display_name == 'DoMatrix':
                 al.do_matrix(parameters)
 
-            print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
-            if response.query_result.fulfillment_text:
-                al.voice(response.query_result.fulfillment_text)
         else:
             if parameters["Dataset"] != 'current':
                 print("The object " + parameters["Dataset"] + " does not exist.")
@@ -114,6 +111,11 @@ def detect_intent_text(project_id, session_id, text, language_code):
                 al.voice("There is no loaded dataset.")
             print("Please, load a dataset or use a previously stored one before using any function.")
             al.voice("Please, load a dataset or use a previously stored one before using any function.")
+            return
+
+    print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
+    if response.query_result.fulfillment_text:
+        al.voice(response.query_result.fulfillment_text)
 
 
 def main(*args, **kwargs):

@@ -13,7 +13,7 @@ import khiva as kv
 import pandas as pd
 
 
-def find_best_n_discords(mt, m, parameters, dataset):
+def find_best_n_discords(mt, m, parameters, col, dataset):
     """
     Execute the operation 'find best n discords' of Khiva.
     :param mt: The matrix profile and the index calculated previously.
@@ -31,13 +31,17 @@ def find_best_n_discords(mt, m, parameters, dataset):
     n = int(n)
     distance, index, subsequence = kv.find_best_n_discords(prof, ind, m, n)
     stm = pd.DataFrame(index=range(m))
-    sub = subsequence.to_list()
+    sub = subsequence.to_numpy()
+    if col:
+        dataset = dataset[col]
     for it in range(n):
-        stm["col" + it] = pd.DataFrame(dataset.loc[sub[it]:sub[it] + m, :])
+        aux = dataset[sub.item(it):sub.item(it) + m]
+        aux.index = range(m)
+        stm["col" + str(it)] = aux
     return stm
 
 
-def find_best_n_motifs(mt, m, parameters, dataset):
+def find_best_n_motifs(mt, m, parameters, col, dataset):
     """
     Execute the operation 'find best n motifs' of Khiva.
     :param mt: The matrix profile and the index calculated previously, and the m used.
@@ -56,8 +60,12 @@ def find_best_n_motifs(mt, m, parameters, dataset):
     distance, index, subsequence = kv.find_best_n_motifs(prof, ind, m, n)
     stm = pd.DataFrame(index=range(m))
     sub = subsequence.to_list()
+    if col:
+        dataset = dataset[col]
     for it in range(n):
-        stm["col" + it] = pd.DataFrame(dataset.loc[sub[it]:sub[it] + m, :])
+        aux = dataset[sub.item(it):sub.item(it) + m]
+        aux.index = range(m)
+        stm["col" + str(it)] = aux
     return stm
 
 
@@ -99,6 +107,7 @@ def stomp_self_join(tt, parameters):
             sub_len = click.prompt('', type=int)
     sub_len = int(sub_len)
     data = kv.stomp_self_join(tts, sub_len)
-    stm = data[0].to_pandas().join(data[1].to_pandas())
-    stm.set_axis(["profile", "index"], axis='columns')
+    stm = data[0].to_pandas()
+    stm.set_axis(["profile"], axis='columns')
+    stm["index"] = data[1].to_pandas()
     return stm, sub_len

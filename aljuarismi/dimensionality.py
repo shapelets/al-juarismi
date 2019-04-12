@@ -10,6 +10,8 @@
 import click
 import khiva as kv
 
+import aljuarismi as al
+
 
 def reduce_datapoints(timeseries, parameters):
     """
@@ -18,6 +20,8 @@ def reduce_datapoints(timeseries, parameters):
     :param num_points:
     :return:
     """
+    if timeseries.columns.size > 1:
+        timeseries = timeseries[al.obtain_column(timeseries)]
     if parameters.get("number") == '':
         print('How many point do you want to reduce it?')
         num_points = click.prompt('', type=int)

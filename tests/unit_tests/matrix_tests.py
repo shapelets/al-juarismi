@@ -14,7 +14,9 @@ import unittest
 import warnings
 
 import dialogflow_v2 as dialogflow
+import pandas as pd
 from google.protobuf import json_format as pbjson
+from khiva.library import set_backend, KHIVABackend
 
 import aljuarismi as al
 
@@ -39,9 +41,11 @@ def ignore_warnings(test_func):
 class MatrixTest(unittest.TestCase):
     DELTA = 1e-6
     DECIMAL = 6
+    session_id = al.id_session_creator()
 
     @ignore_warnings
     def setUp(self):
+        set_backend(KHIVABackend.KHIVA_BACKEND_CPU)
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/franco.gonzalez/Desktop/Credentials/" \
                                                        "Aljuaritmo-3ac32e58ff41.json"
         self.project_id = "aljuaritmo"
@@ -52,69 +56,85 @@ class MatrixTest(unittest.TestCase):
         self.workspace = al.Workspace()
         self.workspace.init_current()
 
+    @ignore_warnings
     def test_stomp_self_join(self):
-        stomp_self_join_result = stomp_self_join(
-            Array(data=[[10, 10, 11, 11, 10, 11, 10, 10, 11, 11, 10, 11, 10, 10],
-                        [11, 10, 10, 11, 10, 11, 11, 10, 11, 11, 10, 10, 11, 10]]), 3)
-        expected_index = [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 9, 10, 11, 6, 7, 8, 3, 4, 5, 0, 1, 2]
+        order = "Execute stomp on himself over energy for a subsequence of 3"
 
+        data = response(self, order)
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'DoMatrix')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
+        self.assertEqual(data['queryResult']['parameters']['operation'], 'stomp_self_join')
+        self.assertEqual(data['queryResult']['parameters']['m'], 3)
+        self.assertEqual(data['queryResult']['parameters']['Dataset'], 'energy')
+
+        tt1 = pd.DataFrame([10, 10, 11, 11, 10, 11, 10, 10, 11, 11, 10, 11, 10, 10])
+        self.workspace.save_dataset('energy', tt1)
+
+        expected_index = [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]
+
+        al.do_matrix(data['queryResult']['parameters'])
+        stomp_self_join_result = al.Workspace().get_dataset('stomp0')
         for i in range(6):
-            self.assertAlmostEqual(stomp_self_join_result[0].to_numpy()[0][i], 0.0, delta=1e-2)
-            self.assertEqual(stomp_self_join_result[1].to_numpy()[0][i], expected_index[i])
+            self.assertAlmostEqual(stomp_self_join_result['profile'].to_numpy()[i], 0.0, delta=1e-2)
+            self.assertEqual(stomp_self_join_result['index'].to_numpy()[i], expected_index[i])
 
+    @ignore_warnings
     def test_stomp(self):
-        stomp_result = stomp(Array([[10, 11, 10, 11], [10, 11, 10, 11]]),
-                             Array([[10, 11, 10, 11, 10, 11, 10, 11], [10, 11, 10, 11, 10, 11, 10, 11]]), 3)
-        expected_index = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-        a = stomp_result[0].to_numpy().flatten()
-        b = stomp_result[1].to_numpy().flatten()
+        order = "Execute stomp on energy and consumption for a subsequence of 3"
 
-        for i in range(24):
-            self.assertAlmostEqual(a[i], 0, delta=1e-2)
-            self.assertAlmostEqual(b[i], expected_index[i])
+        data = response(self, order)
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'DoMatrix')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
+        self.assertEqual(data['queryResult']['parameters']['operation'], 'stomp')
+        self.assertEqual(data['queryResult']['parameters']['m'], 3)
+        self.assertEqual(data['queryResult']['parameters']['Dataset'], 'energy')
+        self.assertEqual(data['queryResult']['parameters']['Dataset2'], 'consumption')
 
+        tt1 = pd.DataFrame([10, 11, 10, 11])
+        tt2 = pd.DataFrame([10, 11, 10, 11, 10, 11, 10, 11])
+        self.workspace.save_dataset('energy', tt1)
+        self.workspace.save_dataset('consumption', tt2)
+
+        expected_index = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+
+        al.do_matrix(data['queryResult']['parameters'])
+        stomp_result = al.Workspace().get_dataset('stomp0')
+        for i in range(6):
+            self.assertAlmostEqual(stomp_result['profile'].to_numpy()[i], 0, delta=1e-2)
+            self.assertAlmostEqual(stomp_result['index'].to_numpy()[i], expected_index[i])
+
+    @ignore_warnings
     def test_find_best_n_motifs(self):
-        stomp_result = stomp(Array([10, 10, 10, 10, 10, 10, 9, 10, 10, 10, 10, 10, 11, 10, 9], dtype.f32),
-                             Array([10, 11, 10, 9], dtype.f32),
-                             3)
+        order = "Execute stomp on energy and consumption for a subsequence of 3"
 
-        find_best_n_motifs_result = find_best_n_motifs(stomp_result[0], stomp_result[1], 3, 1)
+        data = response(self, order)
+
+        tt1 = pd.DataFrame([10, 10, 10, 10, 10, 10, 9, 10, 10, 10, 10, 10, 11, 10, 9])
+        tt2 = pd.DataFrame([10, 11, 10, 9])
+        self.workspace.save_dataset('energy', tt1)
+        self.workspace.save_dataset('consumption', tt2)
+
+        al.do_matrix(data['queryResult']['parameters'])
+
+        order = "Find best 1 motif"
+
+        data = response(self, order)
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'DoMatrix - FromStomp')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
+        self.assertEqual(data['queryResult']['parameters']['operation'], 'find_best_n_motifs')
+        self.assertEqual(data['queryResult']['parameters']['n'], 1)
+
+        data['queryResult']['parameters']['originalDataset'] = \
+            data['queryResult']['outputContexts'][0]['parameters']['Dataset']
+
+        al.do_matrix(data['queryResult']['parameters'])
+
+        find_best_n_motifs_result = al.Workspace().get_dataset('motifs0')
+
         a = find_best_n_motifs_result[1].to_numpy()
         b = find_best_n_motifs_result[2].to_numpy()
         self.assertAlmostEqual(a, 12, delta=self.DELTA)
         self.assertAlmostEqual(b, 1, delta=self.DELTA)
-
-    def test_find_best_n_motifs_multiple_profiles(self):
-        stomp_result = stomp(Array([[10, 10, 10, 10, 10, 10, 9, 10, 10, 10, 10, 10, 11, 10, 9],
-                                    [10, 10, 10, 10, 10, 10, 9, 10, 10, 10, 10, 10, 11, 10, 9]], dtype.f32),
-                             Array([[10, 11, 10, 9], [10, 11, 10, 9]], dtype.f32),
-                             3)
-
-        find_best_n_motifs_result = find_best_n_motifs(stomp_result[0], stomp_result[1], 3, 1)
-        a = find_best_n_motifs_result[1].to_numpy()
-        b = find_best_n_motifs_result[2].to_numpy()
-        np.testing.assert_array_almost_equal(a, np.array([[12, 12], [12, 12]]), decimal=self.DECIMAL)
-        np.testing.assert_array_almost_equal(b, np.array([[1, 1], [1, 1]]), decimal=self.DECIMAL)
-
-    def test_find_best_n_motifs_mirror(self):
-        stomp_result = stomp_self_join(Array([10.1, 11, 10.2, 10.15, 10.775, 10.1, 11, 10.2], dtype.f32), 3)
-
-        find_best_n_motifs_result = find_best_n_motifs(stomp_result[0], stomp_result[1], 3, 2, True)
-        a = find_best_n_motifs_result[1].to_numpy()
-        b = find_best_n_motifs_result[2].to_numpy()
-        self.assertAlmostEqual(a[0], 0, delta=self.DELTA)
-        self.assertAlmostEqual(a[1], 0, delta=self.DELTA)
-        self.assertAlmostEqual(b[0], 5, delta=self.DELTA)
-        self.assertAlmostEqual(b[1], 3, delta=self.DELTA)
-
-    def test_find_best_n_motifs_consecutive(self):
-        stomp_result = stomp_self_join(Array([10.1, 11, 10.1, 10.15, 10.075, 10.1, 11, 10.1, 10.15], dtype.f32), 3)
-
-        find_best_n_motifs_result = find_best_n_motifs(stomp_result[0], stomp_result[1], 3, 2)
-        a = find_best_n_motifs_result[1].to_numpy()
-        b = find_best_n_motifs_result[2].to_numpy()
-        self.assertAlmostEqual(a[1], 6, delta=self.DELTA)
-        self.assertAlmostEqual(b[1], 3, delta=self.DELTA)
 
     def test_find_best_n_discords(self):
         stomp_result = stomp(Array(np.array([11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11])),
@@ -131,50 +151,11 @@ class MatrixTest(unittest.TestCase):
         else:
             self.assertEqual(a[1], 10)
 
-    def test_find_best_n_discords_multiple_profiles(self):
-        stomp_result = stomp(Array(np.array([[11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11],
-                                             [11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11]])),
-                             Array(np.array([[9, 10.1, 10.2, 10.1, 10.2, 10.1, 10.2, 10.1, 10.2, 10.1, 10.2, 10.1, 9],
-                                             [9, 10.1, 10.2, 10.1, 10.2, 10.1, 10.2, 10.1, 10.2, 10.1, 10.2, 10.1,
-                                              9]])),
-                             3)
-        find_best_n_discords_result = find_best_n_discords(stomp_result[0],
-                                                           stomp_result[1], 3, 2)
-        a = find_best_n_discords_result[2].to_numpy()
-
-        # The test failed in the CPU used in the Travis CI build machine
-        if os.environ.get("TRAVIS") == "true":
-            np.testing.assert_array_almost_equal(a, np.array([[[0, 2], [0, 2]], [[0, 2], [0, 2]]]),
-                                                 decimal=self.DECIMAL)
-        else:
-            np.testing.assert_array_almost_equal(a, np.array([[[0, 10], [0, 10]], [[0, 10], [0, 10]]]),
-                                                 decimal=self.DECIMAL)
-
-    def test_find_best_n_discords_mirror(self):
-        stomp_result = stomp_self_join(Array(np.array([10, 11, 10, 10, 11, 10])), 3)
-        find_best_n_discords_result = find_best_n_discords(stomp_result[0],
-                                                           stomp_result[1], 3, 1, True)
-        a = find_best_n_discords_result[1].to_numpy()
-        b = find_best_n_discords_result[2].to_numpy()
-
-        self.assertEqual(a, 3)
-        self.assertEqual(b, 1)
-
-    def test_find_best_n_discords_consecutive(self):
-        stomp_result = stomp_self_join(
-            Array(np.array([10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 9.999, 9.998]), dtype.f32), 3)
-        find_best_n_discords_result = find_best_n_discords(stomp_result[0],
-                                                           stomp_result[1], 3, 2, True)
-        a = find_best_n_discords_result[2].to_numpy()
-
-        self.assertEqual(a[0], 12)
-        # The test failed in the CPU used in the Travis CI build machine
-        if os.environ.get("TRAVIS") == "true":
-            self.assertEqual(a[1], 11)
-        else:
-            self.assertNotEqual(a[1], 11)
+    @ignore_warnings
+    def tearDown(self):
+        self.workspace.clean_workspace()
 
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(MatrixTest)
-unittest.TextTestRunner(verbosity=2).run(suite)
+    unittest.TextTestRunner(verbosity=2).run(suite)
