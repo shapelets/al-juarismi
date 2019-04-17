@@ -68,12 +68,6 @@ def detect_intent_text(project_id, session_id, text, language_code):
         workspace = al.Workspace()
         print(list(workspace.get_all_dataset()))
 
-    # Because this is a follow-up from stomp, this suppose the dataset that we passed is the previously calculated
-    # stomp.
-    elif response.query_result.intent.display_name == 'DoMatrix - FromStomp':
-        parameters['originalDataset'] = data['queryResult']['outputContexts'][0]['parameters']['Dataset']
-        al.do_matrix(parameters)
-
     elif response.query_result.intent.display_name == 'Exit - yes':
         al.exiting_yes(response.query_result.fulfillment_text)
 
@@ -99,7 +93,10 @@ def detect_intent_text(project_id, session_id, text, language_code):
             elif response.query_result.intent.display_name == 'DoClustering':
                 al.do_clustering(parameters)
 
-            elif response.query_result.intent.display_name == 'DoMatrix':
+            elif response.query_result.intent.display_name == 'DoMatrix_Stomp':
+                al.do_matrix(parameters)
+
+            elif response.query_result.intent.display_name == 'DoMatrix_Best':
                 al.do_matrix(parameters)
 
         else:

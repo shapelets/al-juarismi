@@ -9,7 +9,6 @@
 
 
 import json
-import os
 import unittest
 import warnings
 
@@ -46,8 +45,8 @@ class MatrixTest(unittest.TestCase):
     @ignore_warnings
     def setUp(self):
         set_backend(KHIVABackend.KHIVA_BACKEND_CPU)
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/franco.gonzalez/Desktop/Credentials/" \
-                                                       "Aljuaritmo-3ac32e58ff41.json"
+        # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/franco.gonzalez/Desktop/Credentials/" \
+        #                                                "Aljuaritmo-3ac32e58ff41.json"
         self.project_id = "aljuaritmo"
         self.language_code = "en"
         self.session_client = dialogflow.SessionsClient()
@@ -61,7 +60,7 @@ class MatrixTest(unittest.TestCase):
         order = "Execute stomp on himself over energy for a subsequence of 3"
 
         data = response(self, order)
-        self.assertEqual(data['queryResult']['intent']['displayName'], 'DoMatrix')
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'DoMatrix_Stomp')
         self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
         self.assertEqual(data['queryResult']['parameters']['operation'], 'stomp_self_join')
         self.assertEqual(data['queryResult']['parameters']['m'], 3)
@@ -83,7 +82,7 @@ class MatrixTest(unittest.TestCase):
         order = "Execute stomp on energy and consumption for a subsequence of 3"
 
         data = response(self, order)
-        self.assertEqual(data['queryResult']['intent']['displayName'], 'DoMatrix')
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'DoMatrix_Stomp')
         self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
         self.assertEqual(data['queryResult']['parameters']['operation'], 'stomp')
         self.assertEqual(data['queryResult']['parameters']['m'], 3)
@@ -95,7 +94,7 @@ class MatrixTest(unittest.TestCase):
         self.workspace.save_dataset('energy', tt1)
         self.workspace.save_dataset('consumption', tt2)
 
-        expected_index = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+        expected_index = [0, 1, 0, 1, 0, 1]
 
         al.do_matrix(data['queryResult']['parameters'])
         stomp_result = al.Workspace().get_dataset('stomp0')
@@ -116,40 +115,52 @@ class MatrixTest(unittest.TestCase):
 
         al.do_matrix(data['queryResult']['parameters'])
 
-        order = "Find best 1 motif"
+        order = "Find best 1 motif from stomp0"
 
         data = response(self, order)
-        self.assertEqual(data['queryResult']['intent']['displayName'], 'DoMatrix - FromStomp')
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'DoMatrix_Best')
         self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
         self.assertEqual(data['queryResult']['parameters']['operation'], 'find_best_n_motifs')
         self.assertEqual(data['queryResult']['parameters']['n'], 1)
-
-        data['queryResult']['parameters']['originalDataset'] = \
-            data['queryResult']['outputContexts'][0]['parameters']['Dataset']
 
         al.do_matrix(data['queryResult']['parameters'])
 
         find_best_n_motifs_result = al.Workspace().get_dataset('motifs0')
 
-        a = find_best_n_motifs_result[1].to_numpy()
-        b = find_best_n_motifs_result[2].to_numpy()
-        self.assertAlmostEqual(a, 12, delta=self.DELTA)
-        self.assertAlmostEqual(b, 1, delta=self.DELTA)
+        for i in range(3):
+            self.assertEqual(find_best_n_motifs_result['col0'][i], 10)
 
+    @ignore_warnings
     def test_find_best_n_discords(self):
-        stomp_result = stomp(Array(np.array([11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11])),
-                             Array(np.array([9, 10.1, 10.2, 10.1, 10.2, 10.1, 10.2, 10.1, 10.2, 10.1, 10.2, 10.1, 9])),
-                             3)
-        find_best_n_discords_result = find_best_n_discords(stomp_result[0],
-                                                           stomp_result[1], 3, 2)
-        a = find_best_n_discords_result[2].to_numpy()
+        order = "Execute stomp on energy and consumption for a subsequence of 3"
 
-        self.assertEqual(a[0], 0)
-        # The test failed in the CPU used in the Travis CI build machine
-        if os.environ.get("TRAVIS") == "true":
-            self.assertEqual(a[1], 2)
-        else:
-            self.assertEqual(a[1], 10)
+        data = response(self, order)
+
+        tt1 = pd.DataFrame([11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11])
+        tt2 = pd.DataFrame([9, 10.1, 10.2, 10.1, 10.2, 10.1, 10.2, 10.1, 10.2, 10.1, 10.2, 10.1, 9])
+        self.workspace.save_dataset('energy', tt1)
+        self.workspace.save_dataset('consumption', tt2)
+
+        al.do_matrix(data['queryResult']['parameters'])
+
+        order = "Find best 2 discords from stomp0"
+
+        data = response(self, order)
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'DoMatrix_Best')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
+        self.assertEqual(data['queryResult']['parameters']['operation'], 'find_best_n_discords')
+        self.assertEqual(data['queryResult']['parameters']['n'], 2)
+
+        al.do_matrix(data['queryResult']['parameters'])
+
+        find_best_n_discord_result = al.Workspace().get_dataset('discords0')
+
+        expected_result = [11, 10, 11]
+
+        for i in range(1):
+            col = find_best_n_discord_result['col' + str(i)].tolist()
+            for j in range(2):
+                self.assertEqual(col[j], expected_result[j])
 
     @ignore_warnings
     def tearDown(self):

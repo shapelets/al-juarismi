@@ -34,10 +34,15 @@ def find_best_n_discords(mt, m, parameters, col, dataset):
     sub = subsequence.to_numpy()
     if col:
         dataset = dataset[col]
-    for it in range(n):
-        aux = dataset[sub.item(it):sub.item(it) + m]
+    if n == 1:
+        aux = dataset[sub:sub + m]
         aux.index = range(m)
-        stm["col" + str(it)] = aux
+        stm["col" + str(0)] = aux
+    else:
+        for it in range(n):
+            aux = dataset[sub.item(it):sub.item(it) + m]
+            aux.index = range(m)
+            stm["col" + str(it)] = aux
     return stm
 
 
@@ -62,10 +67,15 @@ def find_best_n_motifs(mt, m, parameters, col, dataset):
     sub = subsequence.to_list()
     if col:
         dataset = dataset[col]
-    for it in range(n):
-        aux = dataset[sub.item(it):sub.item(it) + m]
+    if n == 1:
+        aux = dataset[sub:sub + m]
         aux.index = range(m)
-        stm["col" + str(it)] = aux
+        stm["col" + str(0)] = aux
+    else:
+        for it in range(n):
+            aux = dataset[sub.item(it):sub.item(it) + m]
+            aux.index = range(m)
+            stm["col" + str(it)] = aux
     return stm
 
 
