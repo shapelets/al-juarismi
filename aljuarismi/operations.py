@@ -109,7 +109,7 @@ def do_matrix(parameters):
         print("The stomp is stored as stomp" + str(number))
 
     elif op == "find_best_n_discords":
-        if parameters.get('Dataset'):
+        if parameters.get('Dataset') != 'current':
             stomp_name = parameters['Dataset']
             stomp = workspace.get_dataset(stomp_name)
             m = workspace.get_dataset('m_' + stomp_name)
@@ -125,7 +125,7 @@ def do_matrix(parameters):
         discords = al.find_best_n_discords(stomp, m, parameters, col, dataset)
         number = workspace.get_counter('matrix_best_d')
         workspace.save_dataset('discords' + str(number), discords)
-        print('The best ' + str(int(parameters['n'])) + ' discord segments are stored as discord' + str(number))
+        print('The best ' + str(int(parameters['n'])) + ' discord segments are stored as discords' + str(number))
 
     elif op == "find_best_n_motifs":
         if parameters.get('Dataset'):
