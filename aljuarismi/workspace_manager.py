@@ -15,9 +15,14 @@ import pickledb as pdb
 
 class Workspace:
 
+    path = ""
+
     def __init__(self):
-        self.path = os.getcwd()
-        self.path_resources = self.path + "/resources"
+
+        if Workspace.path == "":
+            Workspace.path = os.getcwd()
+
+        self.path_resources = Workspace.path + "/resources"
 
         if not os.path.exists(self.path_resources):
             os.mkdir(self.path_resources)
@@ -26,9 +31,9 @@ class Workspace:
         counters_path = self.path_resources + '/counters.db'
         dataset_locator_path = self.path_resources + '/dataset_locator.db'
 
-        self.__datasets = pdb.load(datasets_path, True)
-        self.__counters = pdb.load(counters_path, True)
-        self.__dataset_locator = pdb.load(dataset_locator_path, True)
+        self.__datasets = pdb.load(datasets_path, auto_dump=True)
+        self.__counters = pdb.load(counters_path, auto_dump=True)
+        self.__dataset_locator = pdb.load(dataset_locator_path, auto_dump=True)
 
     def init_current(self):
         """
@@ -55,7 +60,13 @@ class Workspace:
         """
         if path:
             self.__dataset_locator.set(name, path)
-        self.__datasets.set(name, dataset.to_json())
+        try:
+            if isinstance(dataset, pd.DataFrame):
+                self.__datasets.set(name, dataset.to_json())
+            else:
+                self.__datasets.set(name, dataset)
+        except AttributeError:
+            print("La estoy cagando.")
 
     def get_dataset(self, name):
         """
@@ -66,7 +77,10 @@ class Workspace:
 
         data = self.__datasets.get(name)
         if data:
-            return pd.read_json(data).sort_index()
+            try:
+                return pd.read_json(data).sort_index()
+            except ValueError:
+                return data
         else:
             return None
 
@@ -122,6 +136,17 @@ class Workspace:
         if not num:
             num = 0
         self.__counters.set(name, num + 1)
+        return num
+
+    def get_last_number_counter(self, name):
+        """
+        Obtains the last number generated of a counter.
+        :param name: The name of the counter.
+        :return: The last number generated of the counter.
+        """
+        num = self.__counters.get(name) - 1
+        if not num or num < 0:
+            num = 0
         return num
 
     def save_dataset_path(self, dataset_name, dataset_path):

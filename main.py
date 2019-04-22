@@ -76,7 +76,7 @@ def detect_intent_text(project_id, session_id, text, language_code):
 
     elif not re.search("^Default|Exit", response.query_result.intent.display_name):
 
-        if parameters['Dataset'] == '':
+        if not parameters.get("Dataset"):
             parameters['Dataset'] = 'current'
 
         if al.check_dataset(parameters):
@@ -93,9 +93,12 @@ def detect_intent_text(project_id, session_id, text, language_code):
             elif response.query_result.intent.display_name == 'DoClustering':
                 al.do_clustering(parameters)
 
-            print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
-            if response.query_result.fulfillment_text:
-                al.voice(response.query_result.fulfillment_text)
+            elif response.query_result.intent.display_name == 'DoMatrix_Stomp':
+                al.do_matrix(parameters)
+
+            elif response.query_result.intent.display_name == 'DoMatrix_Best':
+                al.do_matrix(parameters)
+
         else:
             if parameters["Dataset"] != 'current':
                 print("The object " + parameters["Dataset"] + " does not exist.")
@@ -105,6 +108,11 @@ def detect_intent_text(project_id, session_id, text, language_code):
                 al.voice("There is no loaded dataset.")
             print("Please, load a dataset or use a previously stored one before using any function.")
             al.voice("Please, load a dataset or use a previously stored one before using any function.")
+            return
+
+    print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
+    if response.query_result.fulfillment_text:
+        al.voice(response.query_result.fulfillment_text)
 
 
 def main(*args, **kwargs):

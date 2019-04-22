@@ -17,8 +17,6 @@ def execute_print(parameters):
     :return:
     """
     workspace = al.Workspace()
-    dataset = workspace.get_dataset('current')
     data_name = parameters["Dataset"]
-    if data_name:
-        dataset = workspace.get_dataset(data_name)
+    dataset = workspace.get_dataset(data_name)
     print(dataset)
