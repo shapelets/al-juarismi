@@ -40,7 +40,7 @@ def find_best_n_discords(mt, m, parameters, col, dataset):
         stm["col" + str(0)] = aux
     else:
         for it in range(n):
-            aux = dataset[sub.item(it):sub.item(it) + m]
+            aux = dataset[sub[it]:sub[it] + m]
             aux.index = range(m)
             stm["col" + str(it)] = aux
     return stm
