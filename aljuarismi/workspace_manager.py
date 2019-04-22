@@ -15,9 +15,14 @@ import pickledb as pdb
 
 class Workspace:
 
+    path = ""
+
     def __init__(self):
-        self.path = os.getcwd()
-        self.path_resources = self.path + "/resources"
+
+        if Workspace.path == "":
+            Workspace.path = os.getcwd()
+
+        self.path_resources = Workspace.path + "/resources"
 
         if not os.path.exists(self.path_resources):
             os.mkdir(self.path_resources)
@@ -26,9 +31,9 @@ class Workspace:
         counters_path = self.path_resources + '/counters.db'
         dataset_locator_path = self.path_resources + '/dataset_locator.db'
 
-        self.__datasets = pdb.load(datasets_path, True)
-        self.__counters = pdb.load(counters_path, True)
-        self.__dataset_locator = pdb.load(dataset_locator_path, True)
+        self.__datasets = pdb.load(datasets_path, auto_dump=True)
+        self.__counters = pdb.load(counters_path, auto_dump=True)
+        self.__dataset_locator = pdb.load(dataset_locator_path, auto_dump=True)
 
     def init_current(self):
         """
@@ -56,9 +61,12 @@ class Workspace:
         if path:
             self.__dataset_locator.set(name, path)
         try:
-            self.__datasets.set(name, dataset.to_json())
+            if isinstance(dataset, pd.DataFrame):
+                self.__datasets.set(name, dataset.to_json())
+            else:
+                self.__datasets.set(name, dataset)
         except AttributeError:
-            self.__datasets.set(name, dataset)
+            print("La estoy cagando.")
 
     def get_dataset(self, name):
         """
