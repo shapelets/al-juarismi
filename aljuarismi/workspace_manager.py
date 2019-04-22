@@ -79,7 +79,7 @@ class Workspace:
         if data:
             try:
                 return pd.read_json(data).sort_index()
-            except Exception:
+            except ValueError:
                 return data
         else:
             return None
