@@ -33,11 +33,13 @@ def find_best_n_discords(mt, m, parameters, col, dataset):
     n = int(n)
     distance, index, subsequence = kv.find_best_n_discords(prof, ind, m, n)
     stm = pd.DataFrame(index=range(m))
+    subsequence.display()
     sub = subsequence.to_numpy()
+    print(sub)
     if col:
         dataset = dataset[col]
     if n == 1:
-        aux = dataset[sub:sub + m]
+        aux = dataset[sub.min():sub.min() + m]
         aux.index = range(m)
         stm["col" + str(0)] = aux
     else:

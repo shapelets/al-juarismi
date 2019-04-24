@@ -133,3 +133,74 @@ def rand_param(parameters):
         values.append(float(query))
 
     return num_rows, num_col, values
+
+
+def get_subdataset_rows(parameters):
+    """
+    Obtains a subset of the dataset by its rows.
+    :param parameters: The parameter of the function(dataset name,...).
+    """
+    workspace = al.Workspace()
+    data_name = parameters['Dataset']
+    dataset = workspace.get_dataset(data_name)
+
+    if parameters["from"]:
+        index_a = int(parameters["from"])
+    else:
+        print('From what rows?')
+        al.voice('From what rows?')
+        query = al.query_input()
+        while not al.isnumber(query):
+            print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            query = al.query_input()
+        index_a = int(query)
+    if parameters["to"]:
+        index_b = int(parameters['to'])
+    else:
+        print('To what rows?')
+        al.voice('To what rows?')
+        query = al.query_input()
+        while not al.isnumber(query):
+            print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            query = al.query_input()
+        index_b = int(query)
+
+    dataset = dataset.iloc[index_a:index_b + 1]
+    num = workspace.get_counter('sub')
+    name = 'subrow' + str(num) + '_' + data_name
+    workspace.save_dataset(name, dataset)
+    txt = 'The sub-dataset by the rows is saved as ' + name
+    print(txt)
+
+
+def get_subdataset_columns(parameters):
+    """
+    Obtains a subset of the dataset by its columns.
+    :param parameters: The parameter of the function(dataset name,...).
+    """
+    workspace = al.Workspace()
+    data_name = parameters['Dataset']
+    dataset = workspace.get_dataset(data_name)
+    cols = []
+
+    if parameters["cols"]:
+        cols = parameters['cols']
+    else:
+        stop = False
+        while not stop:
+            cols.append(al.obtain_column(dataset))
+            print('Do you want to continue? yes or no?')
+            al.voice('Do you want to continue? yes or no?')
+            response = al.query_input()
+            if response == 'no':
+                stop = True
+
+    dataset = dataset[cols]
+    num = workspace.get_counter('sub')
+    name = 'subcol' + str(num) + '_' + data_name
+    workspace.save_dataset(name, dataset)
+    txt = 'The sub-dataset by the rows is saved as ' + name
+    print(txt)
+    al.voice(txt)

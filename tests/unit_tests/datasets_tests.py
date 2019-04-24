@@ -9,7 +9,6 @@
 
 
 import json
-import os
 import unittest
 import warnings
 
@@ -42,8 +41,7 @@ class DatasetTests(unittest.TestCase):
 
     @ignore_warnings
     def setUp(self):
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/franco.gonzalez/Desktop/Credentials/" \
-                                                       "Aljuaritmo-3ac32e58ff41.json"
+
         self.project_id = "aljuaritmo"
         self.language_code = "en"
         self.session_client = dialogflow.SessionsClient()
@@ -85,6 +83,56 @@ class DatasetTests(unittest.TestCase):
                          '(n_row, n_column) do not match')
         self.assertGreaterEqual(random.values.min(), float(data['queryResult']['parameters']['values'][0]))
         self.assertLessEqual(random.values.max(), float(data['queryResult']['parameters']['values'][1]))
+
+    @ignore_warnings
+    def test_subdataset_rows(self):
+        order = "obtain a subset by rows from random0 from 10 to 60"
+
+        data = response(self, order)
+
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'SubDatasetRow')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
+        self.assertEqual(data['queryResult']['parameters']['Dataset'], 'random0')
+        self.assertEqual(data['queryResult']['parameters']['from'], 10)
+        self.assertEqual(data['queryResult']['parameters']['to'], 60)
+
+        al.create_dataset({'columns': 10, 'rows': 200, 'values': [0, 1]})
+
+        al.get_subdataset_rows(data['queryResult']['parameters'])
+
+        dataset = al.Workspace().get_dataset('subrow0_random0')
+
+        index = dataset.index
+        nrow = dataset.index.size
+
+        self.assertEqual(index.min(), data['queryResult']['parameters']['from'])
+        self.assertEqual(index.max(), data['queryResult']['parameters']['to'])
+        self.assertEqual(nrow, 51)
+
+    @ignore_warnings
+    def test_subdataset_cols(self):
+        order = "obtain a subset from random0 by columns at col0, col2, and col7"
+
+        data = response(self, order)
+
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'SubDatasetCols')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
+        self.assertEqual(data['queryResult']['parameters']['Dataset'], 'random0')
+        self.assertEqual(data['queryResult']['parameters']['cols'], ['col0', 'col2', 'col7'])
+
+        al.create_dataset({'columns': 10, 'rows': 200, 'values': [0, 1]})
+
+        al.get_subdataset_columns(data['queryResult']['parameters'])
+
+        dataset = al.Workspace().get_dataset('subcol0_random0')
+
+        ncol = dataset.columns.size
+        cols = dataset.columns.to_list()
+        expected = ['col0', 'col2', 'col7']
+
+        self.assertEqual(ncol, 3)
+        for n in range(3):
+            self.assertEqual(cols[n], expected[n])
 
     @ignore_warnings
     def tearDown(self):

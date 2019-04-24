@@ -87,6 +87,12 @@ def detect_intent_text(project_id, session_id, text, language_code):
             elif response.query_result.intent.display_name == 'PrintResult':
                 al.execute_print(parameters)
 
+            elif response.query_result.intent.display_name == 'SubDatasetRow':
+                al.get_subdataset_rows(parameters)
+
+            elif response.query_result.intent.display_name == 'SubDatasetCols':
+                al.get_subdataset_columns(parameters)
+
             elif response.query_result.intent.display_name == 'DoDimensionality':
                 al.do_dimensionality(parameters)
 
