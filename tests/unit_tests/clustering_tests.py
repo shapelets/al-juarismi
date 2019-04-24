@@ -50,6 +50,7 @@ class ClusteringTests(unittest.TestCase):
         self.session = self.session_client.session_path(self.project_id, self.session_id)
 
         self.workspace = al.Workspace()
+        self.workspace.init_current()
 
     @ignore_warnings
     def test_kmeans(self):

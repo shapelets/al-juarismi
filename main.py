@@ -99,6 +99,12 @@ def detect_intent_text(project_id, session_id, text, language_code):
             elif response.query_result.intent.display_name == 'DoMatrix_Best':
                 al.do_matrix(parameters)
 
+            elif response.query_result.intent.display_name == 'DoNormalization':
+                al.do_normalization(parameters)
+
+            print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
+            if response.query_result.fulfillment_text:
+                al.voice(response.query_result.fulfillment_text)
         else:
             if parameters["Dataset"] != 'current':
                 print("The object " + parameters["Dataset"] + " does not exist.")

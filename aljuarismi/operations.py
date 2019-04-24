@@ -7,12 +7,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import re
+
 import aljuarismi as al
 
 
 def do_op(parameters):
     """
-    Do a operation of dimensionality.
+    Do an operation of dimensionality.
     :param parameters: The parameters of the function (name of the operation, ...).
     :return:
     """
@@ -33,7 +35,7 @@ def do_op(parameters):
 
 def do_clustering(parameters):
     """
-    Do a operation of clustering.
+    Do an operation of clustering.
     :param parameters: The parameters of the function (name of the operation, number of clusters, ...).
     :return:
     """
@@ -145,3 +147,55 @@ def do_matrix(parameters):
         number = workspace.get_counter('matrix_best_m')
         workspace.save_dataset('motifs' + str(number), motifs)
         print('The best ' + str(int(parameters['n'])) + ' motifs segments are stored as motifs' + str(number))
+
+
+def do_normalization(parameters):
+    """
+    Do an operation of normalization.
+    :param parameters: The parameters of the function (name of the operation, dataset, ...).
+    :return:
+    """
+    op = parameters.pop("operation")
+    workspace = al.Workspace()
+    data_name = parameters["Dataset"]
+    dataset = workspace.get_dataset(data_name)
+    name = ''
+    if not re.search("_in_place$", op):
+        if op == 'decimal_scaling_norm':
+            norm = al.decimal_scaling_norm(dataset)
+            num_norm = str(workspace.get_counter('norm'))
+            name = 'dec_sca_norm' + num_norm
+            workspace.save_dataset(name, norm)
+
+        elif op == 'max_min_norm':
+            norm = al.max_min_norm(dataset, parameters)
+            num_norm = str(workspace.get_counter('norm'))
+            name = 'max_min_norm' + num_norm
+            workspace.save_dataset(name, norm)
+
+        elif op == 'mean_norm':
+            norm = al.mean_norm(dataset)
+            num_norm = str(workspace.get_counter('norm'))
+            name = 'mean_norm' + num_norm
+            workspace.save_dataset(name, norm)
+
+        elif op == 'znorm':
+            norm = al.znorm(dataset, parameters)
+            num_norm = str(workspace.get_counter('norm'))
+            name = 'znorm' + num_norm
+            workspace.save_dataset(name, norm)
+
+        print('The normalization is stored as ' + name)
+        al.voice('The normalization is stored as ' + name)
+    else:
+        if op == 'decimal_scaling_norm_in_place':
+            pass
+
+        elif op == 'max_min_norm_in_place':
+            pass
+
+        elif op == 'mean_norm_in_place':
+            pass
+
+        elif op == 'znorm_in_place':
+            pass

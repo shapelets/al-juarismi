@@ -12,6 +12,7 @@ from aljuarismi.datasets import *
 from aljuarismi.dimensionality import *
 from aljuarismi.exiting import *
 from aljuarismi.matrix import *
+from aljuarismi.normalization import *
 from aljuarismi.operations import *
 from aljuarismi.plotting import *
 from aljuarismi.printing import *
