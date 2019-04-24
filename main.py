@@ -26,8 +26,7 @@ def detect_intent_text(project_id, session_id, text, language_code):
     """
     Detects the intent of the text and execute some instruction
 
-    Using the same `session_id` between requests allows continuation
-    of the conversation.
+    Using the same `session_id` between requests allows continuation of the conversation.
 
     :param project_id: ID of the project
     :param session_id: ID of the session
