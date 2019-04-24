@@ -38,14 +38,12 @@ class Workspace:
     def init_current(self):
         """
         Initialize the current dataset
-        :return:
         """
         self.__datasets.set('current', None)
 
     def clean_workspace(self):
         """
         Delete all databases.
-        :return:
         """
         self.remove_all()
         self.__dataset_locator.deldb()
@@ -56,7 +54,6 @@ class Workspace:
         :param name: The name of the dataset.
         :param dataset: The object dataset.
         :param path: The path where is located the dataset. (By default is a empty string).
-        :return:
         """
         if path:
             self.__dataset_locator.set(name, path)
@@ -88,21 +85,18 @@ class Workspace:
         """
         Removes a dataset.
         :param name: The name of the dataset.
-        :return:
         """
         self.__datasets.rem(name)
 
     def get_all_dataset(self):
         """
         Returns all datasets stored in dataset.
-        :return:
         """
         return self.__datasets.getall()
 
     def remove_all(self):
         """
         Remove all datasets stored in the workspace.
-        :return:
         """
         self.__datasets.deldb()
         self.__counters.deldb()
@@ -122,7 +116,6 @@ class Workspace:
     def get_all_dataset_paths(self):
         """
         Obtains all the names of the datasets which have a stored path.
-        :return:
         """
         return self.__dataset_locator.getall()
 
@@ -154,7 +147,6 @@ class Workspace:
         Saves only the path where the dataset is located.
         :param dataset_name: The name of the dataset.
         :param dataset_path: The path where is located the dataset.
-        :return:
         """
         self.__dataset_locator.set(dataset_name, dataset_path)
 

@@ -17,7 +17,6 @@ def plot_dataset(dataset, parameters):
     Plots graphically a column of the dataset.
     :param dataset: The current dataset.
     :param parameters: The parameter for the graphic.
-    :return:
     """
     ncol = dataset.columns.size
     if ncol > 1:
@@ -45,7 +44,6 @@ def execute_plot(parameters):
     """
     Execute the function plot.
     :param parameters: The parameters for the graphic (dataset name, intervals,...).
-    :return:
     """
     workspace = al.Workspace()
     data_name = parameters["Dataset"]

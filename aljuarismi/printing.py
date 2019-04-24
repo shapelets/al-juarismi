@@ -14,7 +14,6 @@ def execute_print(parameters):
     """
     Execute the print function.
     :param parameters: The parameter for the print (Dataset name, ...).
-    :return:
     """
     workspace = al.Workspace()
     data_name = parameters["Dataset"]

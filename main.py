@@ -87,8 +87,8 @@ def detect_intent_text(project_id, session_id, text, language_code):
             elif response.query_result.intent.display_name == 'PrintResult':
                 al.execute_print(parameters)
 
-            elif response.query_result.intent.display_name == 'DoOperations':
-                al.do_op(parameters)
+            elif response.query_result.intent.display_name == 'DoDimensionality':
+                al.do_dimensionality(parameters)
 
             elif response.query_result.intent.display_name == 'DoClustering':
                 al.do_clustering(parameters)

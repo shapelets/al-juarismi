@@ -19,6 +19,8 @@ def find_best_n_discords(mt, m, parameters, col, dataset):
     :param mt: The matrix profile and the index calculated previously.
     :param m: Subsequence length value used to calculate the matrix profile.
     :param parameters: The parameters of the function (number of clusters, ...).
+    :param col: The column which has been used in stomp.
+    :param dataset: The (first) dataset which has been used in stomp.
     :return: Dataframe with the discord distances, the discord indices and the subsequence indices.
     """
     prof = kv.Array(mt.get("profile").to_list(), khiva_type=kv.dtype.f32)
@@ -52,6 +54,8 @@ def find_best_n_motifs(mt, m, parameters, col, dataset):
     :param mt: The matrix profile and the index calculated previously, and the m used.
     :param m: Subsequence length value used to calculate the matrix profile.
     :param parameters: The parameters of the function (number of clusters, ...).
+    :param col: The column which has been used in stomp.
+    :param dataset: The (first) dataset which has been used in stomp.
     :return: Tuple with the motif distances, the motif indices and the subsequence indices.
     """
     prof = kv.Array(mt.get("profile").to_list(), khiva_type=kv.dtype.f32)

@@ -14,7 +14,6 @@ def exiting_yes(response):
     """
     Exit the program saving the workspace.
     :param response: The response from Dialogflow.
-    :return:
     """
     print('Saving the workspace')
     al.voice('Saving the workspace')
@@ -31,7 +30,6 @@ def exiting_no(response):
     """
     Exit the program deleting the workspace.
     :param response: The response from Dialogflow.
-    :return:
     """
     print('Deleting workspace')
     al.voice('Deleting workspace')

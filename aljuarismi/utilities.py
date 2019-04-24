@@ -45,6 +45,9 @@ def obtain_column(dataset):
 
 
 def query_input():
+    """
+    Execute a query input.
+    """
     query = ''
     while query == '':
         query = click.prompt('')
@@ -81,7 +84,6 @@ def voice(txt):
     """
     Reproduces the message passed.
     :param txt: The text which will be read.
-    :return:
     """
     v = tts.init()
     v.say(txt)

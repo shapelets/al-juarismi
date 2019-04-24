@@ -35,7 +35,6 @@ def load_dataset(parameters):
     """
     Load the dataset.
     :param parameters: The parameters which have the name of the dataset.
-    :return: The loaded dataset.
     """""
     dataset_name = parameters['Dataset']
     workspace = al.Workspace()
@@ -60,7 +59,6 @@ def create_dataset(parameters):
     """
     Creates a random dataset and saves it.
     :param parameters: The parameters for the creation (number of rows, numbers of columns,...).
-    :return: A random dataset.
     """
     workspace = al.Workspace()
 

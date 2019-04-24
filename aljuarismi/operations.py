@@ -12,32 +12,47 @@ import re
 import aljuarismi as al
 
 
-def do_op(parameters):
+def do_dimensionality(parameters):
     """
     Do an operation of dimensionality.
     :param parameters: The parameters of the function (name of the operation, ...).
-    :return:
     """
 
-    op = parameters.pop("Operations")
+    op = parameters.pop("operation")
     workspace = al.Workspace()
     data_name = parameters["Dataset"]
     dataset = workspace.get_dataset(data_name)
 
-    if op == "reduction_points":
+    if op == "paa":
         # Calling khiva
-        c = workspace.get_counter('redux')
-        data = al.reduce_datapoints(dataset.values, parameters)
-        workspace.save_dataset("redux" + str(c), data)
+        data = al.paa(dataset, parameters)
+        num = workspace.get_counter('redux')
+        workspace.save_dataset("paa" + str(num), data)
+        print('The reduction of points is stored as paa' + str(num))
 
-        print('The reduction of points is stored as redux' + str(c))
+    elif op == 'pip':
+        data = al.pip(dataset, parameters)
+        num = workspace.get_counter('redux')
+        workspace.save_dataset("pip" + str(num), data)
+        print('The reduction of points is stored as pip' + str(num))
+
+    elif op == 'ramer_douglas_peucker':
+        data = al.ramer_douglas_peucker(dataset, parameters)
+        num = workspace.get_counter('redux')
+        workspace.save_dataset("RDP" + str(num), data)
+        print('The reduction of points is stored as RDP' + str(num))
+
+    elif op == 'visvalingam':
+        data = al.visvalingam(dataset, parameters)
+        num = workspace.get_counter('redux')
+        workspace.save_dataset("visvalingam" + str(num), data)
+        print('The reduction of points is stored as visvalingam' + str(num))
 
 
 def do_clustering(parameters):
     """
     Do an operation of clustering.
     :param parameters: The parameters of the function (name of the operation, number of clusters, ...).
-    :return:
     """
     op = parameters.pop("operation")
     workspace = al.Workspace()
@@ -66,7 +81,6 @@ def do_matrix(parameters):
     """
     Do a operation of matrix.
     :param parameters: The parameters of the function (name of the operation, number of clusters, ...).
-    :return:
     """
     op = parameters.pop("operation")
     workspace = al.Workspace()
