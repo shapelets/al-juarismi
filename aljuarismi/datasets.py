@@ -119,7 +119,7 @@ def rand_param(parameters):
         al.voice('What is the minimum value?')
         query = al.query_input()
         while not al.isnumber(query):
-            print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            print('Incorrect input.\nIt is not a number.\nPlease introduce one:')
             al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
             query = al.query_input()
         values.append(float(query))
@@ -127,7 +127,7 @@ def rand_param(parameters):
         al.voice('And the maximum?')
         query = al.query_input()
         while not al.isnumber(query):
-            print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            print('Incorrect input.\nIt is not a number.\nPlease introduce one:')
             al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
             query = al.query_input()
         values.append(float(query))
@@ -147,29 +147,29 @@ def get_subdataset_rows(parameters):
     if parameters["from"]:
         index_a = int(parameters["from"])
     else:
-        print('From what rows?')
-        al.voice('From what rows?')
+        print('From what row number?')
+        al.voice('From what row number?')
         query = al.query_input()
         while not al.isnumber(query):
-            print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            print('Incorrect input.\nIt is not a number.\nPlease introduce one:')
             al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
             query = al.query_input()
         index_a = int(query)
     if parameters["to"]:
         index_b = int(parameters['to'])
     else:
-        print('To what rows?')
-        al.voice('To what rows?')
+        print('To what row number?')
+        al.voice('To what row number?')
         query = al.query_input()
         while not al.isnumber(query):
-            print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            print('Incorrect input.\nIt is not a number.\nPlease introduce one:')
             al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
             query = al.query_input()
         index_b = int(query)
 
     dataset = dataset.iloc[index_a:index_b + 1]
     num = workspace.get_counter('sub')
-    name = 'subrow' + str(num) + '_' + data_name
+    name = 'subrow' + str(num) + data_name
     workspace.save_dataset(name, dataset)
     txt = 'The sub-dataset by the rows is saved as ' + name
     print(txt)
@@ -199,7 +199,7 @@ def get_subdataset_columns(parameters):
 
     dataset = dataset[cols]
     num = workspace.get_counter('sub')
-    name = 'subcol' + str(num) + '_' + data_name
+    name = 'subcol' + str(num) + data_name
     workspace.save_dataset(name, dataset)
     txt = 'The sub-dataset by the rows is saved as ' + name
     print(txt)

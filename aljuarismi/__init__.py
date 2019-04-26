@@ -11,6 +11,7 @@ from aljuarismi.clustering import *
 from aljuarismi.datasets import *
 from aljuarismi.dimensionality import *
 from aljuarismi.exiting import *
+from aljuarismi.library import *
 from aljuarismi.matrix import *
 from aljuarismi.normalization import *
 from aljuarismi.operations import *

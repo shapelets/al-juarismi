@@ -213,3 +213,25 @@ def do_normalization(parameters):
 
         elif op == 'znorm_in_place':
             pass
+
+
+def get_library_backend(type):
+    """
+    Gets all backends.
+    :param type:  .
+    """
+    if type == 'backend':
+        al.get_backend()
+    elif type == 'backends':
+        al.get_backends()
+
+
+def set_library_backend(parameters):
+    """
+    Set a backend.
+    :param parameters:  Parameter of the funtion(name of the backend,...).
+    """
+    type = parameters['library']
+    backend = parameters['backend']
+    if type == 'backend':
+        al.set_backend(backend.upper())

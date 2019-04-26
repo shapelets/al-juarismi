@@ -67,6 +67,12 @@ def detect_intent_text(project_id, session_id, text, language_code):
         workspace = al.Workspace()
         print(list(workspace.get_all_dataset()))
 
+    elif response.query_result.intent.display_name == 'GetBackend':
+        al.get_library_backend(parameters['library'])
+
+    elif response.query_result.intent.display_name == 'SetBackend':
+        al.set_library_backend(parameters)
+
     elif response.query_result.intent.display_name == 'Exit - yes':
         al.exiting_yes(response.query_result.fulfillment_text)
 
@@ -107,9 +113,6 @@ def detect_intent_text(project_id, session_id, text, language_code):
             elif response.query_result.intent.display_name == 'DoNormalization':
                 al.do_normalization(parameters)
 
-            print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
-            if response.query_result.fulfillment_text:
-                al.voice(response.query_result.fulfillment_text)
         else:
             if parameters["Dataset"] != 'current':
                 print("The object " + parameters["Dataset"] + " does not exist.")

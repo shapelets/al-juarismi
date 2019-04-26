@@ -56,3 +56,20 @@ The following sentences are used during the training of Aljuarismi:
 * compute the **squared euclidean distance** for **energy** and **energy2**
 * 
 * 
+
+##Library
+
+### GetBackend
+* get **backend**
+* show the current **backend**
+* get the current **backend**
+
+###GetBackends
+* get **backends**
+* get all **backends**
+
+
+###SetBackend
+* set **CUDA** backend
+* set **CPU** backend
+* set  **opencl** backend
