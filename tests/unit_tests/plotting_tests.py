@@ -9,7 +9,6 @@
 
 
 import json
-import os
 import unittest
 import warnings
 
@@ -41,8 +40,6 @@ class PlottingTests(unittest.TestCase):
 
     @ignore_warnings
     def setUp(self):
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/franco.gonzalez/Desktop/Credentials/" \
-                                                       "Aljuaritmo-3ac32e58ff41.json"
         self.project_id = "aljuaritmo"
         self.language_code = "en"
         self.session_client = dialogflow.SessionsClient()
@@ -76,6 +73,15 @@ class PlottingTests(unittest.TestCase):
         self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.9)
         self.assertEqual(data['queryResult']['parameters']['Dataset'], 'titanic')
         self.assertEqual(data['queryResult']['parameters']['columns'], ['Fare', 'Age'])
+
+    def test_plot_from_to(self):
+        order = "Plot titanic from 10 to 30"
+        data = response(self, order)
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'ShowResult')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.85)
+        self.assertEqual(data['queryResult']['parameters']['Dataset'], 'titanic')
+        self.assertEqual(data['queryResult']['parameters']['from'], 10)
+        self.assertEqual(data['queryResult']['parameters']['to'], 30)
 
 
 if __name__ == '__main__':

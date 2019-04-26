@@ -107,7 +107,7 @@ class DatasetTests(unittest.TestCase):
 
         self.assertEqual(index.min(), data['queryResult']['parameters']['from'])
         self.assertEqual(index.max(), data['queryResult']['parameters']['to'])
-        self.assertEqual(nrow, 51)
+        self.assertEqual(nrow, 50)
 
     @ignore_warnings
     def test_subdataset_cols(self):

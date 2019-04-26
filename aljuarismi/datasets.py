@@ -167,7 +167,11 @@ def get_subdataset_rows(parameters):
             query = al.query_input()
         index_b = int(query)
 
-    dataset = dataset.iloc[index_a:index_b + 1]
+    if index_b < index_a:
+        print('This operation cannot be done.\nThe starting row number is greater than the last row number.')
+        raise Exception()
+
+    dataset = dataset.iloc[index_a:index_b]
     num = workspace.get_counter('sub')
     name = 'subrow' + str(num) + data_name
     workspace.save_dataset(name, dataset)

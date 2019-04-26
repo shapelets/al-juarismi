@@ -18,24 +18,34 @@ def plot_dataset(dataset, parameters):
     :param dataset: The current dataset.
     :param parameters: The parameter for the graphic.
     """
+    a = int(parameters['from'] if parameters['from'] else 0)
+    b = int(parameters['to'] if parameters['to'] else dataset.index.size)
+    if b < a:
+        print('This operation cannot be done.\nThe starting row number is greater than the last row number.')
+        raise Exception()
+    if b:
+        dataset = dataset.iloc[:b]
+    if a:
+        dataset = dataset.iloc[a:]
+
     ncol = dataset.columns.size
     if ncol > 1:
         if not parameters["columns"]:
             column_name = al.obtain_column(dataset)
             plt.figure()
-            plt.plot(dataset[column_name].values)
+            plt.plot(dataset[column_name])
             plt.title(column_name)
             plt.show(block=False)
         else:
             for column_name in parameters["columns"]:
                 plt.figure()
-                plt.plot(dataset[column_name].values)
+                plt.plot(dataset[column_name])
                 plt.title(column_name)
                 plt.show(block=False)
 
     else:
         plt.figure()
-        plt.plot(dataset.values)
+        plt.plot(dataset)
         plt.title(parameters["Dataset"])
         plt.show(block=False)
 
