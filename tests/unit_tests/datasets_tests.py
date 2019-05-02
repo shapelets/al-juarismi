@@ -54,7 +54,7 @@ class DatasetTests(unittest.TestCase):
 
     @ignore_warnings
     def test_load_dataset(self):
-        order = "load dataset titanic"
+        order = "load dataset titanic.csv"
 
         data = response(self, order)
 

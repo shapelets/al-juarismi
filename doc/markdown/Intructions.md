@@ -14,10 +14,21 @@ The following sentences are used during the training of Aljuarismi:
 * Load **Titanic**
 * Open the dataset **Titanic**
 * open **Titanic**
+* load the dataset **titanic**.**csv**
+* load **ecg**.**csv**
+* open the dataset **energy**.**csv**
+* open **clime**.**txt**
 
 : load the dataset **Titanic**
+Response: What is the file extension (txt, csv)?
+: csv
 Response: Where is it located?
-:  /home/user/datasets/ -> (It will look for a file Titanic.csv in that folder)  
+:  /home/user/datasets/ -> (It will look for a file Titanic.csv in that folder)
+
+ : load the dataset **Titanic**.**csv**
+Response: Where is it located?
+:  /home/user/datasets/ -> (It will look for a file Titanic.csv in that folder)
+
 
 ## Dataset management functions
 

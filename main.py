@@ -142,7 +142,9 @@ def detect_intent_text(project_id, session_id, text, language_code):
         print('DEBUG: Fulfillment text: {}\n'.format(response.query_result.fulfillment_text))
         if response.query_result.fulfillment_text:
             al.voice(response.query_result.fulfillment_text)
-    except Exception:
+    except Exception as e:
+        print('An error in the execution has been raised.')
+        print(e)
         return
 
 

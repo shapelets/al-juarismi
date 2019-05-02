@@ -8,6 +8,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import os
+import re
 
 import numpy as np
 import pandas as pd
@@ -31,25 +32,55 @@ def ask_for_dataset_path():
     return path
 
 
+def ask_for_dataset_extension(files):
+    """
+    Ask for the dataset extension file.
+    :param files: All files with the same name.
+    :return: The extension file.
+    """
+    print('What is the file extension (txt, csv)?')
+    al.voice('What is the file extension (txt, csv)?')
+    print('All the files that has been found with the same name: ' + str(files))
+    return al.query_input()
+
+
 def load_dataset(parameters):
     """
     Load the dataset.
     :param parameters: The parameters which have the name of the dataset.
     """""
     dataset_name = parameters['Dataset']
+    extension = parameters['extension']
     workspace = al.Workspace()
 
     data = workspace.get_dataset(dataset_name)
     if data is None:
         path = workspace.get_dataset_path(dataset_name)
+
         if path is None:
             path = ask_for_dataset_path()
+            while not os.path.exists(path):
+                print('Invalid path.\nPlease introduce a valid one.')
+                path = ask_for_dataset_path()
 
-        while not os.path.exists(path + '/' + dataset_name + '.csv'):
-            print("Invalid path")
-            print("Please introduce a valid one")
-            path = ask_for_dataset_path()
-        data = pd.read_csv(path + '/' + dataset_name + '.csv')
+        if not extension:
+            files = re.findall(dataset_name + '[^,\']*', str(os.listdir(path)))
+            if len(files) == 0:
+                raise Exception("There is no file with the name " + dataset_name +
+                                ".\nPlease introduce a valid one the next time.")
+            elif len(files) > 1:
+                extension = ask_for_dataset_extension(files)
+            else:
+                extension = re.search('\..*', files[0]).group()[1:]
+
+        abs_path = path + '/' + dataset_name + '.' + extension
+
+        if not os.path.exists(abs_path):
+            raise Exception("Invalid file.\nPlease introduce a valid one the next time.")
+        if extension == 'csv':
+            data = pd.read_csv(abs_path)
+        elif extension == 'txt':
+            data = pd.read_fwf(abs_path)
         workspace.save_dataset(dataset_name, data, path)
 
     workspace.save_dataset('current', data)
