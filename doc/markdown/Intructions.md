@@ -21,6 +21,13 @@ Response: Where is it located?
 
 ## Dataset management functions
 
+## Change name
+
+* rename **ecg** to **energy**
+* rename **random0** to **random_0**
+* change the name of **random0** into **rnd0_0**
+* rename **titanic**
+
 ### Subset of dataset
 
 #### \- By row

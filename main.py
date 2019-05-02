@@ -86,7 +86,10 @@ def detect_intent_text(project_id, session_id, text, language_code):
 
             if al.check_dataset(parameters):
 
-                if response.query_result.intent.display_name == 'ShowResult':
+                if response.query_result.intent.display_name == 'ChangeName':
+                    al.change_name(parameters)
+
+                elif response.query_result.intent.display_name == 'ShowResult':
                     al.execute_plot(parameters)
 
                 elif response.query_result.intent.display_name == 'PrintResult':

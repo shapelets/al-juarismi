@@ -210,6 +210,26 @@ def get_subdataset_columns(parameters):
     al.voice(txt)
 
 
+def change_name(parameters):
+    """
+    Change the name of an existing dataset.
+    :param parameters: The parameter of the function (dataset name,...).
+    """
+    workspace = al.Workspace()
+    or_name = parameters['Dataset']
+    into_name = parameters['NameInto']
+    if not into_name:
+        print('Into what name do you want to change ' + or_name + '?')
+        into_name = al.query_input()
+    while into_name in workspace.get_all_dataset():
+        print('There is already a dataset with the name ' + into_name + '.\nPlease write another name.')
+        into_name = al.query_input()
+    data = workspace.get_dataset(or_name)
+    workspace.remove_dataset(or_name)
+    workspace.save_dataset(into_name, data)
+    print('The dataset ' + or_name + ' name has been updated into ' + into_name)
+
+
 def join_by_cols(parameters):
     """
     Join two dataset with the same number of rows.
@@ -316,3 +336,4 @@ def split_by_rows(parameters):
         it = it + div
 
     print('The splits of ' + name_data + ' are saved as: ' + str(names)[1:-1])
+

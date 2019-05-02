@@ -234,6 +234,31 @@ class DatasetTests(unittest.TestCase):
             nrow = dataset.index.size
             self.assertEqual(ncol, 2)
             self.assertEqual(nrow, 200)
+           
+    @ignore_warnings
+    def test_change_name(self):
+        order = "rename random0 to r_a_n_d_o_m_0"
+
+        data = response(self, order)
+
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'ChangeName')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.95)
+        self.assertEqual(data['queryResult']['parameters']['Dataset'], 'random0')
+        self.assertEqual(data['queryResult']['parameters']['NameInto'], 'r_a_n_d_o_m_0')
+
+        al.create_dataset({'columns': 10, 'rows': 200, 'values': [0, 1]})
+
+        self.assertTrue(al.Workspace().get_dataset('random0') is not None)
+        self.assertTrue(al.Workspace().get_dataset('r_a_n_d_o_m_0') is None)
+        data1 = al.Workspace().get_dataset('random0')
+
+        al.change_name(data['queryResult']['parameters'])
+
+        self.assertTrue(al.Workspace().get_dataset('random0') is None)
+        self.assertTrue(al.Workspace().get_dataset('r_a_n_d_o_m_0') is not None)
+        data2 = al.Workspace().get_dataset('r_a_n_d_o_m_0')
+
+        self.assertTrue(pd.DataFrame.equals(data1, data2))
 
     @ignore_warnings
     def tearDown(self):
