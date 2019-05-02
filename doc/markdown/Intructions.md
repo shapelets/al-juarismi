@@ -21,6 +21,45 @@ Response: Where is it located?
 
 ## Dataset management functions
 
+### Subset of dataset
+
+#### \- By row
+
+* select rows from energy starting at 1 until 10
+* Get a subset of **energy** by rows
+* Select a subset of **energy** by rows from **25** to **60**
+
+#### \- By column
+
+* Obtain a subset of **random0** by columns **col0**, **col1**, **col2** and **col5**
+* Get a subset of **energy** by columns
+* select columns **index** from **stomp0**
+* get a subset of columns **col0**, **col5** and **col9** from **random1**
+### Join of datasets
+
+#### \- By row
+
+* join by rows the datasets **energy** and **ecg**
+* join **energy** and **ecg** by rows
+
+#### \- By column
+
+* Join by columns the datasets **energy** and **ecg**
+* Join **energy** and **ecg** by columns
+
+### Split of dataset
+
+#### \- By row
+
+* split **energy** by **20** rows
+* split by rows the dataset **energy**
+* split the dataset **energy** by **20** rows
+
+#### \- By column
+
+* split the dataset **energy** by **2** columns
+* split by columns **energy**
+
 ## Dimensionality functions
 
 * execute **visvalingam** for reducing **energy** to **40** points
@@ -73,3 +112,15 @@ The following sentences are used during the training of Aljuarismi:
 * set **CUDA** backend
 * set **CPU** backend
 * set  **opencl** backend
+
+##Matrix
+
+###Stomp
+* execute **stomp** on **random2** and **random3** with subsequence length **10**
+* execute **stomp** on **random1** and **random2** with subsequence length of **10**
+* execute **stomp** for the datasets **random1** and **random2**
+* execute **stomp** with **random2** and **random3** with subsequence length of **10**
+
+##StompSelfJoin
+* Execute **stomp** on **energy** with subsequence length of **20**
+* Execute **stomp self join**  on **energy** with subsequence length of **3**

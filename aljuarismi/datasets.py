@@ -208,3 +208,111 @@ def get_subdataset_columns(parameters):
     txt = 'The sub-dataset by the rows is saved as ' + name
     print(txt)
     al.voice(txt)
+
+
+def join_by_cols(parameters):
+    """
+    Join two dataset with the same number of rows.
+    :param parameters: The parameters of the function (dataset names).
+    """
+    workspace = al.Workspace()
+    name_data1 = parameters['Dataset']
+    name_data2 = parameters['Dataset2']
+    dataset1 = workspace.get_dataset(name_data1)
+    dataset2 = workspace.get_dataset(name_data2)
+    if dataset1.index.size != dataset2.index.size:
+        print('Not able to execute.\nThe datasets have different number of rows')
+        return
+    dataset = dataset1.join(dataset2, rsuffix='_0')
+    num = workspace.get_counter('join')
+    name = 'join' + str(num)
+    workspace.save_dataset(name, dataset)
+    print('The resulting dataset between ' + name_data1 + ' and ' + name_data2 + ' is saved as ' + name)
+
+
+def split_by_cols(parameters):
+    """
+    Split a dataset into n datasets of m columns.
+    :param parameters: The parameters of the function (dataset name, size of the split dataset for the column).
+    """
+    workspace = al.Workspace()
+    name_data = parameters['Dataset']
+    dataset = workspace.get_dataset(name_data)
+
+    if parameters['split']:
+        div = int(parameters['split'])
+    else:
+        print('How many cols will each dataset have?')
+        al.voice('How many cols will each dataset have?')
+        query = al.query_input()
+        while not al.isnumber(query):
+            print('Incorrect input.\nIt is not a number.\nPlease introduce one:')
+            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            query = al.query_input()
+        div = int(query)
+
+    it = 0
+    names = []
+    while it < dataset.columns.size:
+        div_dataset = dataset.iloc[:, it:it + div]
+        num = workspace.get_counter('split')
+        name = name_data + 'c' + str(num)
+        names.append(name)
+        workspace.save_dataset(name, div_dataset)
+        it = it + div
+
+    print('The splits of ' + name_data + ' are saved as: ' + str(names)[1:-1])
+
+
+def join_by_rows(parameters):
+    """
+    Join two dataset with the same number of columns.
+    :param parameters: The parameters of the function (dataset names).
+    """
+    workspace = al.Workspace()
+    name_data1 = parameters['Dataset']
+    name_data2 = parameters['Dataset2']
+    dataset1 = workspace.get_dataset(name_data1)
+    dataset2 = workspace.get_dataset(name_data2)
+    if dataset1.columns.size != dataset2.columns.size:
+        print('Not able to execute.\nThe datasets have different number of columns')
+        return
+    dataset = pd.concat([dataset1, dataset2], ignore_index=True)
+    num = workspace.get_counter('join')
+    name = 'join' + str(num)
+    workspace.save_dataset(name, dataset)
+    print('The resulting dataset between ' + name_data1 + ' and ' + name_data2 + ' is saved as ' + name)
+
+
+def split_by_rows(parameters):
+    """
+    Split a dataset into n datasets of m rows.
+    :param parameters: The parameters of the function (dataset name, size of the split dataset for the rows).
+    """
+    workspace = al.Workspace()
+    name_data = parameters['Dataset']
+    dataset = workspace.get_dataset(name_data)
+
+    if parameters['split']:
+        div = int(parameters['split'])
+    else:
+        print('How many rows will each dataset have?')
+        al.voice('How many rows will each dataset have?')
+        query = al.query_input()
+        while not al.isnumber(query):
+            print('Incorrect input.\nIt is not a number.\nPlease introduce one:')
+            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+            query = al.query_input()
+        div = int(query)
+
+    it = 0
+    names = []
+    while it < dataset.index.size:
+        div_dataset = dataset.iloc[it:it + div]
+        num = workspace.get_counter('split')
+        name = name_data + 'r' + str(num)
+        names.append(name)
+        workspace.save_dataset(name, div_dataset)
+        it = it + div
+
+    print('The splits of ' + name_data + ' are saved as: ' + str(names)[1:-1])

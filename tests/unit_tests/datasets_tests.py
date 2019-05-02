@@ -9,6 +9,7 @@
 
 
 import json
+import re
 import unittest
 import warnings
 
@@ -100,13 +101,13 @@ class DatasetTests(unittest.TestCase):
 
         al.get_subdataset_rows(data['queryResult']['parameters'])
 
-        dataset = al.Workspace().get_dataset('subrow0_random0')
+        dataset = al.Workspace().get_dataset('subrow0random0')
 
         index = dataset.index
         nrow = dataset.index.size
 
         self.assertEqual(index.min(), data['queryResult']['parameters']['from'])
-        self.assertEqual(index.max(), data['queryResult']['parameters']['to'])
+        self.assertEqual(index.max(), data['queryResult']['parameters']['to'] - 1)
         self.assertEqual(nrow, 50)
 
     @ignore_warnings
@@ -124,7 +125,7 @@ class DatasetTests(unittest.TestCase):
 
         al.get_subdataset_columns(data['queryResult']['parameters'])
 
-        dataset = al.Workspace().get_dataset('subcol0_random0')
+        dataset = al.Workspace().get_dataset('subcol0random0')
 
         ncol = dataset.columns.size
         cols = dataset.columns.to_list()
@@ -133,6 +134,106 @@ class DatasetTests(unittest.TestCase):
         self.assertEqual(ncol, 3)
         for n in range(3):
             self.assertEqual(cols[n], expected[n])
+
+    @ignore_warnings
+    def test_join_columns(self):
+        order = "join by columns the datasets random0 and random1"
+
+        data = response(self, order)
+
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'JoinByCols')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
+        self.assertEqual(data['queryResult']['parameters']['Dataset'], 'random0')
+        self.assertEqual(data['queryResult']['parameters']['Dataset2'], 'random1')
+
+        al.create_dataset({'columns': 10, 'rows': 200, 'values': [0, 1]})
+        al.create_dataset({'columns': 10, 'rows': 200, 'values': [0, 1]})
+
+        al.join_by_cols(data['queryResult']['parameters'])
+
+        dataset = al.Workspace().get_dataset('join0')
+
+        ncol = dataset.columns.size
+        nrow = dataset.index.size
+
+        self.assertEqual(ncol, 20)
+        self.assertEqual(nrow, 200)
+
+    @ignore_warnings
+    def test_join_rows(self):
+        order = "join by rows the datasets random0 and random1"
+
+        data = response(self, order)
+
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'JoinByRows')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
+        self.assertEqual(data['queryResult']['parameters']['Dataset'], 'random0')
+        self.assertEqual(data['queryResult']['parameters']['Dataset2'], 'random1')
+
+        al.create_dataset({'columns': 10, 'rows': 200, 'values': [0, 1]})
+        al.create_dataset({'columns': 10, 'rows': 200, 'values': [0, 1]})
+
+        al.join_by_rows(data['queryResult']['parameters'])
+
+        dataset = al.Workspace().get_dataset('join0')
+
+        ncol = dataset.columns.size
+        nrow = dataset.index.size
+
+        self.assertEqual(ncol, 10)
+        self.assertEqual(nrow, 400)
+
+    @ignore_warnings
+    def test_split_rows(self):
+        order = "split random0 by 20 rows"
+
+        data = response(self, order)
+
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'SplitByRows')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
+        self.assertEqual(data['queryResult']['parameters']['Dataset'], 'random0')
+        self.assertEqual(data['queryResult']['parameters']['split'], 20)
+
+        al.create_dataset({'columns': 10, 'rows': 200, 'values': [0, 1]})
+
+        al.split_by_rows(data['queryResult']['parameters'])
+
+        datasets = re.findall('random0r[0-9]*', str(al.Workspace().get_all_dataset()))
+        num_datasets = len(datasets)
+        self.assertEqual(num_datasets, 10)
+        workspace = al.Workspace()
+        for num in range(num_datasets):
+            dataset = workspace.get_dataset(datasets[num])
+            ncol = dataset.columns.size
+            nrow = dataset.index.size
+            self.assertEqual(ncol, 10)
+            self.assertEqual(nrow, 20)
+
+    @ignore_warnings
+    def test_split_cols(self):
+        order = "split the dataset random0 by 2 columns"
+
+        data = response(self, order)
+
+        self.assertEqual(data['queryResult']['intent']['displayName'], 'SplitByCols')
+        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.8)
+        self.assertEqual(data['queryResult']['parameters']['Dataset'], 'random0')
+        self.assertEqual(data['queryResult']['parameters']['split'], 2)
+
+        al.create_dataset({'columns': 10, 'rows': 200, 'values': [0, 1]})
+
+        al.split_by_cols(data['queryResult']['parameters'])
+
+        datasets = re.findall('random0c[0-9]*', str(al.Workspace().get_all_dataset()))
+        num_datasets = len(datasets)
+        self.assertEqual(num_datasets, 5)
+        workspace = al.Workspace()
+        for num in range(num_datasets):
+            dataset = workspace.get_dataset(datasets[num])
+            ncol = dataset.columns.size
+            nrow = dataset.index.size
+            self.assertEqual(ncol, 2)
+            self.assertEqual(nrow, 200)
 
     @ignore_warnings
     def tearDown(self):

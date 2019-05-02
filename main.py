@@ -98,6 +98,18 @@ def detect_intent_text(project_id, session_id, text, language_code):
                 elif response.query_result.intent.display_name == 'SubDatasetCols':
                     al.get_subdataset_columns(parameters)
 
+                elif response.query_result.intent.display_name == 'JoinByCols':
+                    al.join_by_cols(parameters)
+
+                elif response.query_result.intent.display_name == 'JoinByRows':
+                    al.join_by_rows(parameters)
+
+                elif response.query_result.intent.display_name == 'SplitByCols':
+                    al.split_by_cols(parameters)
+
+                elif response.query_result.intent.display_name == 'SplitByRows':
+                    al.split_by_rows(parameters)
+
                 elif response.query_result.intent.display_name == 'DoDimensionality':
                     al.do_dimensionality(parameters)
 
