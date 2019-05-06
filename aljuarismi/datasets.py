@@ -255,10 +255,10 @@ def change_name(parameters):
     while into_name in workspace.get_all_dataset():
         print('There is already a dataset with the name ' + into_name + '.\nPlease write another name.')
         into_name = al.query_input()
-    data = workspace.get_dataset(or_name)
+    data = workspace.get_value(or_name)
     workspace.remove_dataset(or_name)
     workspace.save_dataset(into_name, data)
-    print('The dataset ' + or_name + ' name has been updated into ' + into_name)
+    print('The dataset named ' + or_name + ' has been updated into ' + into_name)
 
 
 def join_by_cols(parameters):
@@ -271,9 +271,19 @@ def join_by_cols(parameters):
     name_data2 = parameters['Dataset2']
     dataset1 = workspace.get_dataset(name_data1)
     dataset2 = workspace.get_dataset(name_data2)
+
+    if dataset2 is None:
+        if not name_data2 == "":
+            print("The object " + name_data2 + " does not exist.")
+            al.voice("The object " + name_data2 + " does not exist.")
+        print("Please, provide the two datasets that should be joined.")
+        al.voice("Please, provide the two datasets that should be joined.")
+        return
+
     if dataset1.index.size != dataset2.index.size:
         print('Not able to execute.\nThe datasets have different number of rows')
         return
+
     dataset = dataset1.join(dataset2, rsuffix='_0')
     num = workspace.get_counter('join')
     name = 'join' + str(num)
@@ -325,9 +335,19 @@ def join_by_rows(parameters):
     name_data2 = parameters['Dataset2']
     dataset1 = workspace.get_dataset(name_data1)
     dataset2 = workspace.get_dataset(name_data2)
+
+    if dataset2 is None:
+        if not name_data2 == "":
+            print("The object " + name_data2 + " does not exist.")
+            al.voice("The object " + name_data2 + " does not exist.")
+        print("Please, provide the two datasets that should be joined.")
+        al.voice("Please, provide the two datasets that should be joined.")
+        return
+
     if dataset1.columns.size != dataset2.columns.size:
         print('Not able to execute.\nThe datasets have different number of columns')
         return
+
     dataset = pd.concat([dataset1, dataset2], ignore_index=True)
     num = workspace.get_counter('join')
     name = 'join' + str(num)
@@ -367,4 +387,3 @@ def split_by_rows(parameters):
         it = it + div
 
     print('The splits of ' + name_data + ' are saved as: ' + str(names)[1:-1])
-

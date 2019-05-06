@@ -75,11 +75,22 @@ class Workspace:
         data = self.__datasets.get(name)
         if data:
             try:
-                return pd.read_json(data).sort_index()
+                if isinstance(data, list):
+                    return pd.read_json(data[0]).sort_index()
+                else:
+                    return pd.read_json(data).sort_index()
             except ValueError:
                 return data
         else:
             return None
+
+    def get_value(self, name):
+        """
+        Return the dataset without any transformation or the tuple.
+        :param name: The name of the key (dataset name or variable name).
+        :return: The dataset/tuple.
+        """
+        return self.__datasets.get(name)
 
     def remove_dataset(self, name):
         """
@@ -100,6 +111,7 @@ class Workspace:
         """
         self.__datasets.deldb()
         self.__counters.deldb()
+        self.__dataset_name.deldb()
 
     def get_dataset_path(self, name):
         """
@@ -156,3 +168,4 @@ class Workspace:
         :return: Boolean.
         """
         return self.__datasets.totalkeys() > 1
+

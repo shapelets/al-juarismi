@@ -234,7 +234,7 @@ class DatasetTests(unittest.TestCase):
             nrow = dataset.index.size
             self.assertEqual(ncol, 2)
             self.assertEqual(nrow, 200)
-           
+
     @ignore_warnings
     def test_change_name(self):
         order = "rename random0 to r_a_n_d_o_m_0"

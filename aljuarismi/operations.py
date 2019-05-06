@@ -9,6 +9,8 @@
 
 import re
 
+import pandas as pd
+
 import aljuarismi as al
 
 
@@ -60,13 +62,13 @@ def do_clustering(parameters):
     dataset = workspace.get_dataset(data_name)
 
     if op == "kmeans":
-        (centroids, labels) = al.kmean(dataset.values, parameters)
+        (centroids, labels) = al.kmean(dataset, parameters)
         number = workspace.get_counter('clustering')
         workspace.save_dataset('centroids' + str(number), centroids)
         workspace.save_dataset('labels' + str(number), labels)
 
     elif op == "kshape":
-        (centroids, labels) = al.kshape(dataset.values, parameters)
+        (centroids, labels) = al.kshape(dataset, parameters)
         number = workspace.get_counter('clustering')
         workspace.save_dataset('centroids' + str(number), centroids)
         workspace.save_dataset('labels' + str(number), labels)
@@ -94,6 +96,14 @@ def do_matrix(parameters):
         dataset1 = workspace.get_dataset(data_name)
         dataset2 = workspace.get_dataset(data_name2)
 
+        if dataset2 is None:
+            if not data_name2 == "":
+                print("The object " + data_name2 + " does not exist.")
+                al.voice("The object " + data_name2 + " does not exist.")
+            print("Please, provide the two datasets that should be stomped.")
+            al.voice("Please, provide the two datasets that should be stomped.")
+            return
+
         col = ''
         if dataset1.columns.size > 1:
             col = al.obtain_column(dataset1)
@@ -103,9 +113,7 @@ def do_matrix(parameters):
 
         (stomp, m) = al.stomp(dataset1.values, dataset2.values, parameters)
         number = workspace.get_counter('matrix_stomp')
-        workspace.save_dataset('stomp' + str(number), stomp)
-        workspace.save_dataset('m_stomp' + str(number), m)
-        workspace.save_dataset('col_stomp' + str(number), [col, data_name])
+        workspace.save_dataset('stomp' + str(number), (stomp.to_json(), m, col, dataset1.to_json()))
         print("The stomp is stored as stomp" + str(number))
 
     elif op == "stomp_self_join":
@@ -119,45 +127,25 @@ def do_matrix(parameters):
 
         (stomp, m) = al.stomp_self_join(dataset1.values, parameters)
         number = workspace.get_counter('matrix_stomp')
-        workspace.save_dataset('stomp' + str(number), stomp)
-        workspace.save_dataset('m_stomp' + str(number), m)
-        workspace.save_dataset('col_stomp' + str(number), [col, data_name])
+        workspace.save_dataset('stomp' + str(number), (stomp.to_json(), m, col, dataset1.to_json()))
         print("The stomp is stored as stomp" + str(number))
 
     elif op == "find_best_n_discords":
-        if parameters.get('Dataset') != 'current':
-            stomp_name = parameters['Dataset']
-            stomp = workspace.get_dataset(stomp_name)
-            m = workspace.get_dataset('m_' + stomp_name)
-            (col, data_name) = workspace.get_dataset('col_' + stomp_name)
-        else:
-            num = workspace.get_last_number_counter('matrix_stomp')
-            stomp = workspace.get_dataset('stomp' + str(num))
-            m = workspace.get_dataset('m_stomp' + str(num))
-            (col, data_name) = workspace.get_dataset('col_stomp' + str(num))
+        stomp_name = parameters['Dataset']
+        stomp = workspace.get_dataset(stomp_name)
+        m, col, dataset = workspace.get_value(stomp_name)[1:]
 
-        dataset = workspace.get_dataset(data_name)
-
-        discords = al.find_best_n_discords(stomp, m, parameters, col, dataset)
+        discords = al.find_best_n_discords(stomp, m, parameters, col, pd.read_json(dataset).sort_index())
         number = workspace.get_counter('matrix_best_d')
         workspace.save_dataset('discords' + str(number), discords)
         print('The best ' + str(int(parameters['n'])) + ' discord segments are stored as discords' + str(number))
 
     elif op == "find_best_n_motifs":
-        if parameters.get('Dataset'):
-            stomp_name = parameters['Dataset']
-            stomp = workspace.get_dataset(stomp_name)
-            m = workspace.get_dataset('m_' + stomp_name)
-            (col, data_name) = workspace.get_dataset('col_' + stomp_name)
-        else:
-            num = workspace.get_last_number_counter('matrix_stomp')
-            stomp = workspace.get_dataset('stomp' + str(num))
-            m = workspace.get_dataset('m_stomp' + str(num))
-            (col, data_name) = workspace.get_dataset('col_stomp' + str(num))
+        stomp_name = parameters['Dataset']
+        stomp = workspace.get_dataset(stomp_name)
+        m, col, dataset = workspace.get_value(stomp_name)[1:]
 
-        dataset = workspace.get_dataset(data_name)
-
-        motifs = al.find_best_n_motifs(stomp, m, parameters, col, dataset)
+        motifs = al.find_best_n_motifs(stomp, m, parameters, col, pd.read_json(dataset).sort_index())
         number = workspace.get_counter('matrix_best_m')
         workspace.save_dataset('motifs' + str(number), motifs)
         print('The best ' + str(int(parameters['n'])) + ' motifs segments are stored as motifs' + str(number))

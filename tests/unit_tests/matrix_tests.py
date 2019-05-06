@@ -45,8 +45,6 @@ class MatrixTest(unittest.TestCase):
     @ignore_warnings
     def setUp(self):
         set_backend(KHIVABackend.KHIVA_BACKEND_CPU)
-        # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/franco.gonzalez/Desktop/Credentials/" \
-        #                                                "Aljuaritmo-3ac32e58ff41.json"
         self.project_id = "aljuaritmo"
         self.language_code = "en"
         self.session_client = dialogflow.SessionsClient()
@@ -57,7 +55,7 @@ class MatrixTest(unittest.TestCase):
 
     @ignore_warnings
     def test_stomp_self_join(self):
-        order = "Execute stomp on himself over energy for a subsequence of 3"
+        order = "Execute stomp self join on energy with subsequence length of 3"
 
         data = response(self, order)
         self.assertEqual(data['queryResult']['intent']['displayName'], 'DoMatrix_Stomp')
@@ -79,7 +77,7 @@ class MatrixTest(unittest.TestCase):
 
     @ignore_warnings
     def test_stomp(self):
-        order = "Execute stomp on energy and consumption for a subsequence of 3"
+        order = "Execute stomp on energy and consumption with a subsequence length of 3"
 
         data = response(self, order)
         self.assertEqual(data['queryResult']['intent']['displayName'], 'DoMatrix_Stomp')
@@ -104,7 +102,7 @@ class MatrixTest(unittest.TestCase):
 
     @ignore_warnings
     def test_find_best_n_motifs(self):
-        order = "Execute stomp on energy and consumption for a subsequence of 3"
+        order = "Execute stomp on energy and consumption with a subsequence length of 3"
 
         data = response(self, order)
 
@@ -132,7 +130,7 @@ class MatrixTest(unittest.TestCase):
 
     @ignore_warnings
     def test_find_best_n_discords(self):
-        order = "Execute stomp on energy and consumption for a subsequence of 3"
+        order = "Execute stomp on energy and consumption with a subsequence length of 3"
 
         data = response(self, order)
 
