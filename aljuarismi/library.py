@@ -14,7 +14,7 @@ import khiva as kv
 
 def get_backend():
     """
-    Execute the funtion get_backend of Khiva and print the result.
+    Execute the function get_backend of Khiva and print the result.
     """
     backend = kv.get_backend()
     backend_name = re.search('(_[^_]*)$', backend.name).group()[1:]
@@ -23,7 +23,7 @@ def get_backend():
 
 def get_backends():
     """
-     Execute the funtion get_backends of Khiva and print which backends has the computer.
+     Execute the function get_backends of Khiva and print which backends has the computer.
     """
     backends = kv.get_backends()
     cuda = kv.KHIVABackend.KHIVA_BACKEND_CUDA.value & backends
@@ -40,7 +40,7 @@ def get_backends():
 
 def set_backend(backend):
     """
-     Execute the funtion set_backend of Khiva.
+     Execute the function set_backend of Khiva.
     :param backend: The backend to set.
     """
     if backend == 'CPU':

@@ -108,11 +108,10 @@ The following sentences are used during the training of Aljuarismi:
 * execute kshape with **3** clusters for **energy** dataset
 * apply kshape to **random1** with **5** clusters
 
-## Distance Functions
+## Features
 
-* compute the **squared euclidean distance** for **energy** and **energy2**
-* 
-* 
+* compute features on **energy**
+* execute features on **energy**
 
 ##Library
 

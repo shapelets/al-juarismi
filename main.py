@@ -128,6 +128,9 @@ def detect_intent_text(project_id, session_id, text, language_code):
                 elif response.query_result.intent.display_name == 'DoNormalization':
                     al.do_normalization(parameters)
 
+                elif response.query_result.intent.display_name == 'DoFeatures':
+                    al.do_features(parameters)
+
             else:
                 if parameters["Dataset"] != 'current':
                     print("The object " + parameters["Dataset"] + " does not exist.")

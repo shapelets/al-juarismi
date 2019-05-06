@@ -56,7 +56,7 @@ def get_epsilon(parameters):
 def paa(dataset, parameters):
     """
     Executes the function paa of khiva.
-    :param dataset: The dataset which will be evaluated.
+    :param dataset: The dataset which is computed.
     :param parameters: The parameters of the function (number of points).
     :return: The timeserie with the reduced points.
     """
@@ -72,7 +72,7 @@ def paa(dataset, parameters):
 def pip(dataset, parameters):
     """
     Executes the function pip of khiva.
-    :param dataset: The dataset which will be evaluated.
+    :param dataset: The dataset which is computed.
     :param parameters: The parameters of the function (number of pip).
     :return: The timeserie with the reduced points.
     """
@@ -90,7 +90,7 @@ def pip(dataset, parameters):
 def ramer_douglas_peucker(dataset, parameters):
     """
     Executes the function Ramer-Douglas-Peucker of khiva.
-    :param dataset: The dataset which will be evaluated.
+    :param dataset: The dataset which is computed.
     :param parameters: The parameters of the function (epsilon).
     :return: The timeserie with the reduced points.
     """
@@ -108,7 +108,7 @@ def ramer_douglas_peucker(dataset, parameters):
 def visvalingam(dataset, parameters):
     """
     Executes the function Visvalingam of khiva.
-    :param dataset: The dataset which will be evaluated.
+    :param dataset: The dataset which is computed.
     :param parameters: The parameters of the function (number of points).
     :return: The timeserie with the reduced points.
     """

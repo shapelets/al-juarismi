@@ -16,7 +16,7 @@ def kmean(tt, parameters):
     """
     Execute the kmeans of Khiva.
     :param parameters: The parameters of the function (number of clusters, ...).
-    :param tt: Timeseries which will be evaluated.
+    :param tt: The dataset which is computed.
     :return: Tuple with the centroids and labels.
     """
     tts = kv.Array(tt)
@@ -33,7 +33,7 @@ def kshape(tt, parameters):
     """
     Execute the kshape of Khiva.
     :param parameters: The parameters of the function (number of clusters, ...).
-    :param tt: Timeseries which will be evaluated.
+    :param tt: The dataset which is computed.
     :return: Tuple with the centroids and labels.
     """
     tts = kv.Array(tt)

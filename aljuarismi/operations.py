@@ -167,7 +167,6 @@ def do_normalization(parameters):
     """
     Do an operation of normalization.
     :param parameters: The parameters of the function (name of the operation, dataset, ...).
-    :return:
     """
     op = parameters.pop("operation")
     workspace = al.Workspace()
@@ -218,7 +217,7 @@ def do_normalization(parameters):
 def get_library_backend(type):
     """
     Gets all backends.
-    :param type:  .
+    :param type: Type of backend (the current backend 'backend' or all the available backends 'backends')
     """
     if type == 'backend':
         al.get_backend()
@@ -229,9 +228,26 @@ def get_library_backend(type):
 def set_library_backend(parameters):
     """
     Set a backend.
-    :param parameters:  Parameter of the funtion(name of the backend,...).
+    :param parameters: Parameter of the funtion (name of the backend,...).
     """
     type = parameters['library']
     backend = parameters['backend']
     if type == 'backend':
         al.set_backend(backend.upper())
+
+
+def do_features(parameters):
+    """
+    Execute the feature operations.
+    :param parameters: The parameters for this function (name_dataset).
+    """
+    workspace = al.Workspace()
+    data_name = parameters['Dataset']
+    dataset = workspace.get_dataset(data_name)
+    features = al.features(dataset)
+    num_norm = str(workspace.get_counter('feat'))
+    name = data_name + 'Features' + num_norm
+    workspace.save_dataset(name, features)
+
+    print('The features are stored as ' + name)
+    al.voice('The features are stored as ' + name)

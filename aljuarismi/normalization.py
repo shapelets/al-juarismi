@@ -31,7 +31,7 @@ def znorm(dataset, parameters):
     """
     Execute the znorm of Khiva.
     :return: Tuple with the centroids and labels.
-    :param dataset: Dataset which will be evaluated.
+    :param dataset: The dataset which is computed.
     :param parameters: The parameters of the function (epsilon).
     :return: The normalization of the dataset.
     """
@@ -48,7 +48,7 @@ def max_min_norm(dataset, parameters):
     """
     Execute the max min norm of Khiva.
     :return: Tuple with the centroids and labels.
-    :param dataset: Dataset which will be evaluated.
+    :param dataset: The dataset which is computed.
     :param parameters: The parameters of the function (high, low, epsilon).
     :return: The normalization of the dataset.
     """
@@ -65,7 +65,7 @@ def mean_norm(dataset):
     """
     Execute the mean norm of Khiva.
     :return: Tuple with the centroids and labels.
-    :param dataset: Dataset which will be evaluated.
+    :param dataset: The dataset which is computed.
     :return: The normalization of the dataset.
     """
     tt = nm.Array(dataset)
@@ -80,7 +80,7 @@ def decimal_scaling_norm(dataset):
     """
     Execute the decimal scaling norm of Khiva.
     :return: Tuple with the centroids and labels.
-    :param dataset: Dataset which will be evaluated.
+    :param dataset: The dataset which is computed.
     :return: The normalization of the dataset.
     """
     tt = nm.Array(dataset)

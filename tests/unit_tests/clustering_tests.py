@@ -16,6 +16,7 @@ import warnings
 import dialogflow_v2 as dialogflow
 import pandas as pd
 from google.protobuf import json_format as pbjson
+from khiva.library import set_backend, KHIVABackend
 
 import aljuarismi as al
 
@@ -38,10 +39,13 @@ def ignore_warnings(test_func):
 
 
 class ClusteringTests(unittest.TestCase):
+    DELTA = 1e-3
+    DECIMAL = 6
     session_id = al.id_session_creator()
 
     @ignore_warnings
     def setUp(self):
+        set_backend(KHIVABackend.KHIVA_BACKEND_CPU)
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/franco.gonzalez/Desktop/Credentials/" \
                                                        "Aljuaritmo-3ac32e58ff41.json"
         self.project_id = "aljuaritmo"
@@ -75,7 +79,10 @@ class ClusteringTests(unittest.TestCase):
 
         (centroid, labels) = al.kmean(tts, data['queryResult']['parameters'])
 
-        self.assertEqual(expected_c.values.all(), centroid.values.all())
+        for i in range(len(expected_c)):
+            self.assertAlmostEqual(centroid[0][i], expected_c[0][i], delta=self.DELTA)
+            self.assertAlmostEqual(centroid[1][i], expected_c[1][i], delta=self.DELTA)
+            self.assertAlmostEqual(centroid[2][i], expected_c[2][i], delta=self.DELTA)
 
     @ignore_warnings
     def test_kmeans_dataset(self):
@@ -101,9 +108,14 @@ class ClusteringTests(unittest.TestCase):
                                    [1.5, -1.5, 0.8333, -0.8333],
                                    [4.8333, 3.6667, 2.6667, 1.6667]])
 
-        (centroid, labels) = al.kmean(tts, data['queryResult']['parameters'])
+        al.do_clustering(data['queryResult']['parameters'])
 
-        self.assertEqual(expected_c.values.all(), centroid.values.all())
+        (centroid, labels) = (al.Workspace().get_dataset('centroids0'), al.Workspace().get_dataset('labels0'))
+
+        for i in range(len(expected_c)):
+            self.assertAlmostEqual(centroid[0][i], expected_c[0][i], delta=self.DELTA)
+            self.assertAlmostEqual(centroid[1][i], expected_c[1][i], delta=self.DELTA)
+            self.assertAlmostEqual(centroid[2][i], expected_c[2][i], delta=self.DELTA)
 
     @ignore_warnings
     def test_kshape(self):
@@ -127,7 +139,10 @@ class ClusteringTests(unittest.TestCase):
 
         (centroid, labels) = al.kshape(tts, data['queryResult']['parameters'])
 
-        self.assertEqual(expected_c.values.all(), centroid.values.all())
+        for i in range(len(expected_c)):
+            self.assertAlmostEqual(centroid[0][i], expected_c[0][i], delta=self.DELTA)
+            self.assertAlmostEqual(centroid[1][i], expected_c[1][i], delta=self.DELTA)
+            self.assertAlmostEqual(centroid[2][i], expected_c[2][i], delta=self.DELTA)
 
     @ignore_warnings
     def test_shape_dataset(self):
@@ -152,9 +167,14 @@ class ClusteringTests(unittest.TestCase):
                                    [-0.7825, 1.5990, 0.1701, 0.4082, 0.8845, -1.4969, -0.7825],
                                    [-0.6278, 1.3812, -2.0090, 0.5022, 0.6278, 0.0000, 0.1256]])
 
-        (centroid, labels) = al.kshape(tts, data['queryResult']['parameters'])
+        al.do_clustering(data['queryResult']['parameters'])
 
-        self.assertEqual(expected_c.values.all(), centroid.values.all())
+        (centroid, labels) = (al.Workspace().get_dataset('centroids0'), al.Workspace().get_dataset('labels0'))
+
+        for i in range(len(expected_c)):
+            self.assertAlmostEqual(centroid[0][i], expected_c[0][i], delta=self.DELTA)
+            self.assertAlmostEqual(centroid[1][i], expected_c[1][i], delta=self.DELTA)
+            self.assertAlmostEqual(centroid[2][i], expected_c[2][i], delta=self.DELTA)
 
     @ignore_warnings
     def tearDown(self):
