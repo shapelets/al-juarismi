@@ -74,9 +74,8 @@ def load_dataset(parameters):
                 extension = re.search('\..*', files[0]).group()[1:]
 
         abs_path = path + '/' + dataset_name + '.' + extension
-
         if not os.path.exists(abs_path):
-            raise Exception("Invalid file.\nPlease introduce a valid one the next time.")
+            raise Exception("Invalid file." + abs_path + "\nPlease introduce a valid one the next time.")
         if extension == 'csv':
             data = pd.read_csv(abs_path)
         elif extension == 'txt':
