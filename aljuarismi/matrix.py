@@ -68,11 +68,11 @@ def find_best_n_motifs(mt, m, parameters, col, dataset):
     n = int(n)
     distance, index, subsequence = kv.find_best_n_motifs(prof, ind, m, n)
     stm = pd.DataFrame(index=range(m))
-    sub = subsequence.to_list()
+    sub = subsequence.to_numpy()
     if col:
         dataset = dataset[col]
     if n == 1:
-        aux = dataset[sub:sub + m]
+        aux = dataset[sub.min():sub.min() + m]
         aux.index = range(m)
         stm["col" + str(0)] = aux
     else:
