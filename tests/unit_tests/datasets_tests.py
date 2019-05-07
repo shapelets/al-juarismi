@@ -49,7 +49,7 @@ class DatasetTests(unittest.TestCase):
         self.session = self.session_client.session_path(self.project_id, self.session_id)
 
         self.workspace = al.Workspace()
-        self.workspace.save_dataset_path('titanic', '../../datasets')
+        self.workspace.save_dataset_path('titanic', 'datasets')
         self.workspace.init_current()
 
     @ignore_warnings
@@ -65,7 +65,7 @@ class DatasetTests(unittest.TestCase):
         al.load_dataset(data['queryResult']['parameters'])
         self.workspace = al.Workspace()
         dataset = self.workspace.get_dataset('current')
-        titanic = pd.read_csv("../../datasets/titanic.csv")
+        titanic = pd.read_csv("datasets/titanic.csv")
         self.assertEqual(dataset.to_json(), titanic.to_json())
 
     @ignore_warnings
