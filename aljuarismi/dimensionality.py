@@ -22,11 +22,11 @@ def get_int_number(parameters):
         num_points = int(parameters["number"])
     else:
         print('How many point do you want to reduce it?')
-        al.voice('How many point do you want to reduce it?')
+
         query = al.query_input()
         while not query.isnumeric():
             print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
-            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+
             query = al.query_input()
         num_points = int(query)
     return num_points
@@ -43,11 +43,11 @@ def get_epsilon(parameters):
         num_points = parameters["number"]
     else:
         print('What is the value of epsilon?')
-        al.voice('What is the value of epsilon?')
+
         query = al.query_input()
         while not query.isnumeric():
             print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
-            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+
             query = al.query_input()
         num_points = float(query)
     return num_points

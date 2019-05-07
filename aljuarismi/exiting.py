@@ -16,13 +16,13 @@ def exiting_yes(response):
     :param response: The response from Dialogflow.
     """
     print('Saving the workspace')
-    al.voice('Saving the workspace')
+
     print('Saved workspace')
-    al.voice('Saved workspace')
+
     print('DEBUG: Fulfillment text: {}'.format(response))
-    al.voice(response)
+
     print('Closing program')
-    al.voice('Closing program')
+
     exit()
 
 
@@ -32,13 +32,13 @@ def exiting_no(response):
     :param response: The response from Dialogflow.
     """
     print('Deleting workspace')
-    al.voice('Deleting workspace')
+
     al.Workspace().clean_workspace()
     print('Deleted workspace')
-    al.voice('Deleted workspace')
+
     print('DEBUG: Fulfillment text: {}'.format(response))
-    al.voice(response)
+
     print('Closing program')
-    al.voice('Closing program')
+
     exit()
 

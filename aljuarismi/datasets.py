@@ -22,7 +22,7 @@ def ask_for_dataset_path():
     :return: The path introduced.
     """
     print('Where is it located?')
-    al.voice('Where is it located?')
+
     print('Current path is ' + os.getcwd())
     query = al.query_input()
     if query == 'here':
@@ -39,7 +39,7 @@ def ask_for_dataset_extension(files):
     :return: The extension file.
     """
     print('What is the file extension (txt, csv)?')
-    al.voice('What is the file extension (txt, csv)?')
+
     print('All the files that has been found with the same name: ' + str(files))
     return al.query_input()
 
@@ -96,7 +96,6 @@ def create_dataset(parameters):
     num_rows, num_col, values = rand_param(parameters)
 
     print('Creating the random dataset')
-    al.voice('Creating the random dataset')
 
     tt = pd.DataFrame(index=range(num_rows))
     for n in range(num_col):
@@ -108,8 +107,6 @@ def create_dataset(parameters):
     workspace.save_dataset('current', tt)
     print('Created and saved as random{} which has {} columns, {} rows and values '
           'between {} and {}'.format(str(rand), num_col, num_rows, values[0], values[1]))
-    al.voice('Created and saved as random{} which has {} columns, {} rows and values '
-             'between {} and {}'.format(str(rand), num_col, num_rows, values[0], values[1]))
 
 
 def rand_param(parameters):
@@ -123,11 +120,11 @@ def rand_param(parameters):
         num_col = int(parameters["columns"])
     else:
         print('How many columns?')
-        al.voice('How many columns?')
+
         query = al.query_input()
         while not query.isnumeric():
             print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
-            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+
             query = al.query_input()
         num_col = int(query)
 
@@ -135,11 +132,11 @@ def rand_param(parameters):
         num_rows = int(parameters["rows"])
     else:
         print('How many rows?')
-        al.voice('How many rows?')
+
         query = al.query_input()
         while not query.isnumeric():
             print('Incorrect input.\nIt is not a number.\nPlease introduce one.')
-            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+
             query = al.query_input()
         num_rows = int(query)
 
@@ -147,19 +144,19 @@ def rand_param(parameters):
         values = parameters["values"]
     else:
         print('What is the minimum value?')
-        al.voice('What is the minimum value?')
+
         query = al.query_input()
         while not al.isnumber(query):
             print('Incorrect input.\nIt is not a number.\nPlease introduce one:')
-            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+
             query = al.query_input()
         values.append(float(query))
         print('And the maximum?')
-        al.voice('And the maximum?')
+
         query = al.query_input()
         while not al.isnumber(query):
             print('Incorrect input.\nIt is not a number.\nPlease introduce one:')
-            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+
             query = al.query_input()
         values.append(float(query))
 
@@ -179,22 +176,22 @@ def get_subdataset_rows(parameters):
         index_a = int(parameters["from"])
     else:
         print('From what row number?')
-        al.voice('From what row number?')
+
         query = al.query_input()
         while not al.isnumber(query):
             print('Incorrect input.\nIt is not a number.\nPlease introduce one:')
-            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+
             query = al.query_input()
         index_a = int(query)
     if parameters["to"]:
         index_b = int(parameters['to'])
     else:
         print('To what row number?')
-        al.voice('To what row number?')
+
         query = al.query_input()
         while not al.isnumber(query):
             print('Incorrect input.\nIt is not a number.\nPlease introduce one:')
-            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+
             query = al.query_input()
         index_b = int(query)
 
@@ -227,7 +224,7 @@ def get_subdataset_columns(parameters):
         while not stop:
             cols.append(al.obtain_column(dataset))
             print('Do you want to continue? yes or no?')
-            al.voice('Do you want to continue? yes or no?')
+
             response = al.query_input()
             if response == 'no':
                 stop = True
@@ -238,7 +235,6 @@ def get_subdataset_columns(parameters):
     workspace.save_dataset(name, dataset)
     txt = 'The sub-dataset by the rows is saved as ' + name
     print(txt)
-    al.voice(txt)
 
 
 def change_name(parameters):
@@ -275,9 +271,9 @@ def join_by_cols(parameters):
     if dataset2 is None:
         if not name_data2 == "":
             print("The object " + name_data2 + " does not exist.")
-            al.voice("The object " + name_data2 + " does not exist.")
+
         print("Please, provide the two datasets that should be joined.")
-        al.voice("Please, provide the two datasets that should be joined.")
+
         return
 
     if dataset1.index.size != dataset2.index.size:
@@ -304,11 +300,11 @@ def split_by_cols(parameters):
         div = int(parameters['split'])
     else:
         print('How many cols will each dataset have?')
-        al.voice('How many cols will each dataset have?')
+
         query = al.query_input()
         while not al.isnumber(query):
             print('Incorrect input.\nIt is not a number.\nPlease introduce one:')
-            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+
             query = al.query_input()
         div = int(query)
 
@@ -339,9 +335,9 @@ def join_by_rows(parameters):
     if dataset2 is None:
         if not name_data2 == "":
             print("The object " + name_data2 + " does not exist.")
-            al.voice("The object " + name_data2 + " does not exist.")
+
         print("Please, provide the two datasets that should be joined.")
-        al.voice("Please, provide the two datasets that should be joined.")
+
         return
 
     if dataset1.columns.size != dataset2.columns.size:
@@ -368,11 +364,11 @@ def split_by_rows(parameters):
         div = int(parameters['split'])
     else:
         print('How many rows will each dataset have?')
-        al.voice('How many rows will each dataset have?')
+
         query = al.query_input()
         while not al.isnumber(query):
             print('Incorrect input.\nIt is not a number.\nPlease introduce one:')
-            al.voice('Incorrect input.\nIt is not a number.\nPlease introduce one.')
+
             query = al.query_input()
         div = int(query)
 

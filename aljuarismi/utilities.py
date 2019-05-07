@@ -11,7 +11,6 @@ import random
 import string
 
 import click
-import pyttsx3 as tts
 
 import aljuarismi.workspace_manager as wm
 
@@ -32,15 +31,15 @@ def obtain_column(dataset):
     """
     print("I have more than one column available:")
     print(list(dataset.columns.values))
-    voice("I have more than one column available:")
+
     column_name = ''
     while column_name not in list(dataset.columns.values):
         column_name = click.prompt('Which is the one to be selected?', type=str)
-        voice('Which is the one to be selected?')
+
         click.echo('DEBUG: %s' % column_name)
         if column_name not in list(dataset.columns.values):
             print('Incorrect column')
-            voice('Incorrect column')
+
     return column_name
 
 
@@ -80,11 +79,3 @@ def isnumber(value):
         return False
 
 
-def voice(txt):
-    """
-    Reproduces the message passed.
-    :param txt: The text which will be read.
-    """
-    v = tts.init()
-    v.say(txt)
-    v.runAndWait()
