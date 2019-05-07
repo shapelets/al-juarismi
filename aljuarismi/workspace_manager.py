@@ -111,7 +111,6 @@ class Workspace:
         """
         self.__datasets.deldb()
         self.__counters.deldb()
-        self.__dataset_name.deldb()
 
     def get_dataset_path(self, name):
         """

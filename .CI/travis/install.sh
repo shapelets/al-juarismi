@@ -17,10 +17,8 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     python${PYTHON_VERSION} --version
 
     pip${PYTHON_VERSION} install -r requirements.txt
-    pip${PYTHON_VERSION} install -r test-requirements.txt
     pip${PYTHON_VERSION} install codecov
 else
     pip install -r requirements.txt
-    pip install -r test-requirements.txt
     pip install codecov
 fi
