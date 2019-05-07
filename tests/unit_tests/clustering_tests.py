@@ -9,7 +9,6 @@
 
 
 import json
-import os
 import unittest
 import warnings
 
@@ -46,8 +45,7 @@ class ClusteringTests(unittest.TestCase):
     @ignore_warnings
     def setUp(self):
         set_backend(KHIVABackend.KHIVA_BACKEND_CPU)
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/franco.gonzalez/Desktop/Credentials/" \
-                                                       "Aljuaritmo-3ac32e58ff41.json"
+
         self.project_id = "aljuaritmo"
         self.language_code = "en"
         self.session_client = dialogflow.SessionsClient()
