@@ -39,9 +39,10 @@ matrix:
         - codecov -F MacOS -X gcov
 install:
   - export GOOGLE_APPLICATION_CREDENTIALS=Aljuaritmo-3ac32e58ff41.json
+  - source .CI/travis/install.sh
   - source .CI/travis/install-arrayfire.sh
   - source .CI/travis/install-khiva.sh
-  - source .CI/travis/install.sh
+  - source .CI/travis/install_requirements.sh
 
 script:
   - source .CI/travis/build_and_test.sh
