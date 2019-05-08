@@ -36,7 +36,7 @@ def ignore_warnings(test_func):
     return do_test
 
 
-class DimensionalityTest(unittest.TestCase):
+class FeaturesTest(unittest.TestCase):
     DELTA = 1e-3
     DECIMAL = 6
     session_id = al.id_session_creator()
@@ -84,5 +84,5 @@ class DimensionalityTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(DimensionalityTest)
+    suite = unittest.TestLoader().loadTestsFromTestCase(FeaturesTest)
     unittest.TextTestRunner(verbosity=2).run(suite)
