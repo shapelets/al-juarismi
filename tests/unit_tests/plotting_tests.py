@@ -45,21 +45,7 @@ class PlottingTests(unittest.TestCase):
         self.session_client = dialogflow.SessionsClient()
         self.session = self.session_client.session_path(self.project_id, self.session_id)
 
-    def test_plot_default(self):
-        order = "Plot it"
-        data = response(self, order)
-        self.assertEqual(data['queryResult']['intent']['displayName'], 'ShowResult')
-        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.9)
-        self.assertEqual(data['queryResult']['parameters']['Dataset'], '')
-
-    def test_plot_current_dataset(self):
-        order = "Plot the current dataset"
-        data = response(self, order)
-        self.assertEqual(data['queryResult']['intent']['displayName'], 'ShowResult')
-        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.9)
-        self.assertEqual(data['queryResult']['parameters']['Dataset'], 'current_dataset')
-
-    def test_plot_any_dataset(self):
+    def test_plot(self):
         order = "Plot energy"
         data = response(self, order)
         self.assertEqual(data['queryResult']['intent']['displayName'], 'ShowResult')

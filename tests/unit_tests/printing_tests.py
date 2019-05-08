@@ -9,7 +9,6 @@
 
 
 import json
-import os
 import unittest
 import warnings
 
@@ -41,28 +40,12 @@ class PrintingTests(unittest.TestCase):
 
     @ignore_warnings
     def setUp(self):
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/franco.gonzalez/Desktop/Credentials/" \
-                                                       "Aljuaritmo-3ac32e58ff41.json"
         self.project_id = "aljuaritmo"
         self.language_code = "en"
         self.session_client = dialogflow.SessionsClient()
         self.session = self.session_client.session_path(self.project_id, self.session_id)
 
-    def test_print_default(self):
-        order = "Print it"
-        data = response(self, order)
-        self.assertEqual(data['queryResult']['intent']['displayName'], 'PrintResult')
-        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.9)
-        self.assertEqual(data['queryResult']['parameters']['Dataset'], '')
-
-    def test_print_current_dataset(self):
-        order = "Print the current dataset"
-        data = response(self, order)
-        self.assertEqual(data['queryResult']['intent']['displayName'], 'PrintResult')
-        self.assertGreater(data['queryResult']['intentDetectionConfidence'], 0.9)
-        self.assertEqual(data['queryResult']['parameters']['Dataset'], 'current_dataset')
-
-    def test_print_any_dataset(self):
+    def test_print(self):
         order = "Print energy"
         data = response(self, order)
         self.assertEqual(data['queryResult']['intent']['displayName'], 'PrintResult')
