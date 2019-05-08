@@ -54,7 +54,7 @@ class DimensionalityTest(unittest.TestCase):
 
     @ignore_warnings
     def test_ramer_douglas_peucker(self):
-        order = 'Execute ramerDouglasPeucker on timeserie with an epsilon of 1.0'
+        order = 'Execute ramerDouglasPeucker on timeserie with an epsilon value of 1.0'
 
         data = response(self, order)
         self.assertEqual(data['queryResult']['intent']['displayName'], 'DoDimensionality')
@@ -76,7 +76,7 @@ class DimensionalityTest(unittest.TestCase):
 
     @ignore_warnings
     def test_visvalingam(self):
-        order = 'Execute visvalingam on timeserie at 5 points'
+        order = 'Execute visvalingam for reducing timeserie to 5 points'
 
         data = response(self, order)
         self.assertEqual(data['queryResult']['intent']['displayName'], 'DoDimensionality')
@@ -98,7 +98,7 @@ class DimensionalityTest(unittest.TestCase):
 
     @ignore_warnings
     def test_paa(self):
-        order = 'Execute paa on timeserie at 5 points'
+        order = 'Execute paa for reducing timeserie to 5 points'
 
         data = response(self, order)
         self.assertEqual(data['queryResult']['intent']['displayName'], 'DoDimensionality')
@@ -118,7 +118,7 @@ class DimensionalityTest(unittest.TestCase):
 
     @ignore_warnings
     def test_pip(self):
-        order = 'Execute pip on timeserie at 6 points'
+        order = 'Execute pip for reducing timeserie to 6 points'
 
         data = response(self, order)
         self.assertEqual(data['queryResult']['intent']['displayName'], 'DoDimensionality')
@@ -144,5 +144,5 @@ class DimensionalityTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(NormalizationTest)
+    suite = unittest.TestLoader().loadTestsFromTestCase(DimensionalityTest)
     unittest.TextTestRunner(verbosity=2).run(suite)

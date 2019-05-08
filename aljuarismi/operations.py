@@ -99,9 +99,9 @@ def do_matrix(parameters):
         if dataset2 is None:
             if not data_name2 == "":
                 print("The object " + data_name2 + " does not exist.")
-                al.voice("The object " + data_name2 + " does not exist.")
+
             print("Please, provide the two datasets that should be stomped.")
-            al.voice("Please, provide the two datasets that should be stomped.")
+
             return
 
         col = ''
@@ -187,7 +187,7 @@ def do_normalization(parameters):
             workspace.save_dataset(name, norm)
 
         print('The normalization is stored as ' + name)
-        al.voice('The normalization is stored as ' + name)
+
     else:
         if op == 'decimal_scaling_norm_in_place':
             pass
@@ -238,4 +238,3 @@ def do_features(parameters):
     workspace.save_dataset(name, features)
 
     print('The features are stored as ' + name)
-    al.voice('The features are stored as ' + name)

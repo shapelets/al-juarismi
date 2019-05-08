@@ -132,7 +132,6 @@ class NormalizationTest(unittest.TestCase):
             self.assertAlmostEqual(max_min_norm_result[i], expected[i], delta=self.DELTA)
             self.assertAlmostEqual(max_min_norm_result[i + 4], expected[i], delta=self.DELTA)
 
-
     @unittest.skip
     def test_max_min_norm_in_place(self):
         tss = Array([[0, 1, 2, 3], [4, 5, 6, 7]])

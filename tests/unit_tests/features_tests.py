@@ -84,5 +84,5 @@ class DimensionalityTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(NormalizationTest)
+    suite = unittest.TestLoader().loadTestsFromTestCase(DimensionalityTest)
     unittest.TextTestRunner(verbosity=2).run(suite)

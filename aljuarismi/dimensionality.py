@@ -94,7 +94,7 @@ def ramer_douglas_peucker(dataset, parameters):
     :param parameters: The parameters of the function (epsilon).
     :return: The timeserie with the reduced points.
     """
-    epsilon = al.get_float_number(parameters)
+    epsilon = al.get_epsilon(parameters)
     if dataset.columns.size > 1:
         dataset = dataset[al.obtain_column(dataset)]
     k_array = kv.Array([range(dataset.size), dataset.to_numpy().flatten()])
